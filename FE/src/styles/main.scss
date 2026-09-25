@@ -1,0 +1,221 @@
+@import 'variables';
+@import 'bootstrap/scss/bootstrap';
+
+// ---------------------------------------------------------------------------
+// Base
+// ---------------------------------------------------------------------------
+html {
+  scroll-behavior: smooth;
+}
+
+body {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  font-optical-sizing: auto;
+}
+
+h1,
+h2,
+h3,
+h4,
+.display-1,
+.display-2,
+.display-3,
+.display-4 {
+  letter-spacing: -0.01em;
+}
+
+::selection {
+  background: $carbone;
+  color: $ottico;
+}
+
+a,
+button {
+  transition: $transition-lusso;
+}
+
+#root {
+  min-height: 100vh;
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex: 1 0 auto;
+}
+
+// Etichetta piccola in maiuscoletto (sezioni, label, metadati)
+.eyebrow,
+.form-label {
+  font-family: $font-family-sans-serif;
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: $grafite;
+}
+
+.text-serif {
+  font-family: $headings-font-family;
+}
+
+.bg-carbone {
+  background-color: $carbone;
+  color: $ottico;
+}
+
+.bg-perla {
+  background-color: $perla;
+}
+
+.border-hairline {
+  border: 1px solid $linea-chiara;
+}
+
+.surface {
+  background: $ottico;
+  border: 1px solid $linea-chiara;
+  border-radius: $border-radius-xl;
+  box-shadow: $box-shadow;
+}
+
+.page-enter {
+  animation: page-in 0.6s $ease-lusso both;
+}
+
+@keyframes page-in {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Bottoni
+// ---------------------------------------------------------------------------
+.btn {
+  letter-spacing: 0.02em;
+}
+
+.btn-primary,
+.btn-dark {
+  --bs-btn-hover-bg: #{$carbone-soft};
+  --bs-btn-hover-border-color: #{$carbone-soft};
+  --bs-btn-active-bg: #000;
+
+  &:hover {
+    transform: translateY(-1px);
+    box-shadow: $box-shadow;
+  }
+}
+
+.btn-outline-primary,
+.btn-outline-dark {
+  --bs-btn-border-color: #{rgba(17, 17, 17, 0.16)};
+}
+
+.btn-ghost-light {
+  color: $ottico;
+  border: 1px solid rgba(255, 255, 255, 0.24);
+  background: transparent;
+
+  &:hover,
+  &:focus-visible {
+    color: $carbone;
+    background: $ottico;
+    border-color: $ottico;
+  }
+}
+
+.btn-icon {
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// ---------------------------------------------------------------------------
+// Form
+// ---------------------------------------------------------------------------
+.form-control,
+.form-select {
+  &:hover:not(:focus):not(:disabled) {
+    border-color: rgba(17, 17, 17, 0.24);
+  }
+}
+
+.invalid-feedback {
+  font-size: 0.8rem;
+
+  &::before {
+    content: '— ';
+  }
+}
+
+.form-control.is-invalid,
+.form-select.is-invalid {
+  background-image: none;
+  padding-right: $input-padding-x;
+}
+
+// ---------------------------------------------------------------------------
+// Alert e badge monocromatici
+// ---------------------------------------------------------------------------
+.alert {
+  border: 1px solid $linea-chiara;
+  background: $perla;
+  color: $carbone;
+}
+
+.alert-danger {
+  border-color: rgba(17, 17, 17, 0.4);
+  background: $ottico;
+}
+
+.alert-dark {
+  background: $carbone;
+  color: $ottico;
+  border-color: $carbone;
+}
+
+.badge-soft {
+  background: $perla;
+  color: $carbone;
+  border: 1px solid $linea-chiara;
+  font-weight: 500;
+  letter-spacing: 0.06em;
+}
+
+.badge-outline {
+  background: transparent;
+  color: $grafite;
+  border: 1px solid rgba(17, 17, 17, 0.16);
+}
+
+// ---------------------------------------------------------------------------
+// Modali
+// ---------------------------------------------------------------------------
+.modal-content {
+  box-shadow: $box-shadow-lg;
+}
+
+.modal.fade .modal-dialog {
+  transition: transform 0.45s $ease-lusso;
+  transform: translateY(16px) scale(0.98);
+}
+
+.modal.show .modal-dialog {
+  transform: none;
+}
+
+.modal-title {
+  font-family: $headings-font-family;
+  font-size: 1.75rem;
+}
