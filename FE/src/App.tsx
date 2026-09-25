@@ -6,6 +6,7 @@ import Dettaglio from './pages/Dettaglio'
 import Login from './pages/Login'
 import NotFound from './pages/NotFound'
 import PasswordDimenticata from './pages/PasswordDimenticata'
+import Preferiti from './pages/Preferiti'
 import Profilo from './pages/Profilo'
 import Registrati from './pages/Registrati'
 import ResetPassword from './pages/ResetPassword'
@@ -30,6 +31,7 @@ export default function App() {
 
         <Route element={<RequireAuth />}>
           <Route path="/profilo" element={<Profilo />} />
+          <Route path="/preferiti" element={<Preferiti />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />
