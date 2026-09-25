@@ -2,6 +2,7 @@ import { Container, Nav, Navbar, NavDropdown } from 'react-bootstrap'
 import { Link, NavLink, useNavigate } from 'react-router-dom'
 import { useAuth } from '../context/useAuth'
 import Icon from './Icon'
+import ThemeToggle from './ThemeToggle'
 
 export default function AppNavbar() {
   const { user, isAdmin, logout } = useAuth()
@@ -18,7 +19,11 @@ export default function AppNavbar() {
         <Navbar.Brand as={Link} to="/" className="brand">
           Salone <em>Auto</em>
         </Navbar.Brand>
-        <Navbar.Toggle aria-controls="nav-principale" />
+        {/* Fuori dal menu collassabile: da mobile resta visibile accanto all'hamburger, da desktop va in fondo */}
+        <div className="d-flex align-items-center gap-2 order-lg-last ms-lg-3">
+          <ThemeToggle />
+          <Navbar.Toggle aria-controls="nav-principale" />
+        </div>
         <Navbar.Collapse id="nav-principale">
           <Nav className="me-auto ms-lg-5">
             <Nav.Link as={NavLink} to="/" end eventKey="catalogo">

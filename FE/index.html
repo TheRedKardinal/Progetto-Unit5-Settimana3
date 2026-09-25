@@ -12,6 +12,18 @@
       rel="stylesheet"
     />
     <title>Salone Auto</title>
+    <script>
+      // Tema applicato prima del primo render (niente lampo bianco): scelta salvata, altrimenti quella del sistema
+      (function () {
+        var tema = 'light'
+        try {
+          var salvato = localStorage.getItem('salone.tema')
+          tema = salvato === 'light' || salvato === 'dark' ? salvato
+            : window.matchMedia('(prefers-color-scheme: dark)').matches ? 'dark' : 'light'
+        } catch (e) {}
+        document.documentElement.setAttribute('data-bs-theme', tema)
+      })()
+    </script>
   </head>
   <body>
     <div id="root"></div>

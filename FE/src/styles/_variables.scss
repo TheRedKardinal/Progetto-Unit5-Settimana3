@@ -6,9 +6,9 @@ $carbone: #111111;
 $carbone-soft: #1a1a1a;
 $ottico: #ffffff;
 $perla: #f7f7f7;
-$grafite: #6b6b6b;
-$argento: #a3a3a3;
-$linea-chiara: rgba(17, 17, 17, 0.08);
+$grafite: #5c5c5c;
+$argento: #9a9a9a;
+$linea-chiara: rgba(17, 17, 17, 0.12);
 $linea-scura: rgba(255, 255, 255, 0.08);
 
 $white: $ottico;
@@ -33,6 +33,7 @@ $danger: $carbone;
 $light: $perla;
 $dark: $carbone;
 
+// --bs-body-bg è il colore delle SUPERFICI (card, input, modali, pannelli); il fondo pagina è --sa-bg (main.scss)
 $body-bg: $ottico;
 $body-color: $carbone;
 $link-color: $carbone;
@@ -41,6 +42,22 @@ $link-decoration: none;
 $border-color: $linea-chiara;
 $text-muted: $grafite;
 $min-contrast-ratio: 3;
+
+// Tema scuro (data-bs-theme="dark"): stessa monocromia, invertita
+$body-bg-dark: $carbone-soft;
+$body-color-dark: #ededed;
+$body-emphasis-color-dark: $ottico;
+$body-secondary-color-dark: rgba(255, 255, 255, 0.6);
+$body-secondary-bg-dark: #151515;
+$body-tertiary-color-dark: rgba(255, 255, 255, 0.4);
+$body-tertiary-bg-dark: #151515;
+$border-color-dark: #2a2a2a;
+$link-color-dark: $ottico;
+$link-hover-color-dark: #c8c8c8;
+$form-invalid-color-dark: $ottico;
+$form-invalid-border-color-dark: rgba(255, 255, 255, 0.6);
+$form-valid-color-dark: $ottico;
+$form-valid-border-color-dark: #2a2a2a;
 
 // Tipografia
 $font-family-sans-serif: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;
@@ -90,12 +107,11 @@ $btn-focus-width: 0.2rem;
 $input-border-radius: $border-radius;
 $input-border-radius-sm: $border-radius;
 $input-border-radius-lg: $border-radius;
-$input-border-color: rgba(17, 17, 17, 0.12);
-$input-bg: $ottico;
+// Bordo, fondo e focus degli input seguono il tema (variabili CSS, non colori compilati)
 $input-padding-y: 0.72rem;
 $input-padding-x: 1rem;
-$input-focus-border-color: $carbone;
-$input-focus-box-shadow: 0 0 0 4px rgba(17, 17, 17, 0.06);
+$input-focus-border-color: var(--sa-text);
+$input-focus-box-shadow: 0 0 0 4px var(--sa-line);
 $input-placeholder-color: $argento;
 $form-select-border-radius: $border-radius;
 $form-select-focus-box-shadow: $input-focus-box-shadow;

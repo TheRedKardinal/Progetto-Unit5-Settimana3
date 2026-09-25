@@ -18,7 +18,7 @@ export default function CarCard({ car }: { car: CarSummaryResponse }) {
           {car.anno} · {CARBURANTE_LABEL[car.carburante]} · {CONDIZIONE_LABEL[car.condizione]}
         </p>
         <h3 className="car-card-title">{car.titolo}</h3>
-        <p className="text-secondary small mb-0">
+        <p className="text-secondary small mb-4">
           {car.marca} {car.modello}
         </p>
         <div className="car-card-footer">

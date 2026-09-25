@@ -2,6 +2,53 @@
 @import 'bootstrap/scss/bootstrap';
 
 // ---------------------------------------------------------------------------
+// Temi: token di colore come variabili CSS, così si passa da chiaro a scuro senza ricompilare.
+// Il tema si sceglie con data-bs-theme su <html> (vedi index.html e ThemeToggle).
+// ---------------------------------------------------------------------------
+:root,
+[data-bs-theme='light'] {
+  --sa-bg: #f2f2f2; // fondo pagina: stacca le superfici bianche
+  --sa-surface: #{$ottico}; // card, pannelli, input
+  --sa-well: #{$perla}; // "pozzetti" dentro le superfici (intestazioni, riquadri)
+  --sa-text: #{$carbone};
+  --sa-muted: #{$grafite};
+  --sa-subtle: #{$argento};
+  --sa-line: #{$linea-chiara};
+  --sa-line-strong: rgba(17, 17, 17, 0.22);
+  --sa-accent: #{$carbone}; // pieni: bottoni primari, badge, cuore attivo
+  --sa-accent-hover: #2a2a2a;
+  --sa-on-accent: #{$ottico};
+  --sa-deep: #{$carbone}; // pannelli "plancia": navbar, hero, footer, pannello VIN
+  --sa-deep-line: #{$linea-scura};
+  --sa-glass: rgba(255, 255, 255, 0.88);
+  --sa-shadow: 0 12px 32px -8px rgba(17, 17, 17, 0.09);
+  --sa-shadow-lg: 0 24px 56px -16px rgba(17, 17, 17, 0.18);
+  --bs-secondary-rgb: 92, 92, 92;
+}
+
+[data-bs-theme='dark'] {
+  --sa-bg: #{$carbone};
+  --sa-surface: #{$carbone-soft};
+  --sa-well: #151515;
+  --sa-text: #ededed;
+  --sa-muted: rgba(255, 255, 255, 0.6);
+  --sa-subtle: rgba(255, 255, 255, 0.3);
+  --sa-line: rgba(255, 255, 255, 0.08);
+  --sa-line-strong: rgba(255, 255, 255, 0.2);
+  --sa-accent: #{$ottico};
+  --sa-accent-hover: #e2e2e2;
+  --sa-on-accent: #{$carbone};
+  --sa-deep: #0a0a0a;
+  --sa-deep-line: rgba(255, 255, 255, 0.07);
+  --sa-glass: rgba(17, 17, 17, 0.72);
+  --sa-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.55);
+  --sa-shadow-lg: 0 24px 56px -16px rgba(0, 0, 0, 0.75);
+  --bs-secondary-rgb: 163, 163, 163;
+  // text-dark / bg-dark diventano "colore d'accento" anche nel tema scuro
+  --bs-dark-rgb: 237, 237, 237;
+}
+
+// ---------------------------------------------------------------------------
 // Base
 // ---------------------------------------------------------------------------
 html {
@@ -9,9 +56,13 @@ html {
 }
 
 body {
+  background-color: var(--sa-bg);
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
   font-optical-sizing: auto;
+  transition:
+    background-color 0.35s $ease-lusso,
+    color 0.35s $ease-lusso;
 }
 
 h1,
@@ -26,8 +77,8 @@ h4,
 }
 
 ::selection {
-  background: $carbone;
-  color: $ottico;
+  background: var(--sa-accent);
+  color: var(--sa-on-accent);
 }
 
 a,
@@ -53,7 +104,7 @@ main {
   font-weight: 500;
   letter-spacing: 0.16em;
   text-transform: uppercase;
-  color: $grafite;
+  color: var(--sa-muted);
 }
 
 .text-serif {
@@ -61,23 +112,15 @@ main {
 }
 
 .bg-carbone {
-  background-color: $carbone;
+  background-color: var(--sa-deep);
   color: $ottico;
 }
 
-.bg-perla {
-  background-color: $perla;
-}
-
-.border-hairline {
-  border: 1px solid $linea-chiara;
-}
-
 .surface {
-  background: $ottico;
-  border: 1px solid $linea-chiara;
+  background: var(--sa-surface);
+  border: 1px solid var(--sa-line);
   border-radius: $border-radius-xl;
-  box-shadow: $box-shadow;
+  box-shadow: var(--sa-shadow);
 }
 
 .page-enter {
@@ -95,8 +138,12 @@ main {
   }
 }
 
+[data-bs-theme='dark'] .text-dark {
+  color: var(--sa-text) !important;
+}
+
 // ---------------------------------------------------------------------------
-// Bottoni
+// Bottoni: i pieni usano il colore d'accento (nero su chiaro, bianco su scuro)
 // ---------------------------------------------------------------------------
 .btn {
   letter-spacing: 0.02em;
@@ -104,19 +151,39 @@ main {
 
 .btn-primary,
 .btn-dark {
-  --bs-btn-hover-bg: #{$carbone-soft};
-  --bs-btn-hover-border-color: #{$carbone-soft};
-  --bs-btn-active-bg: #000;
+  --bs-btn-color: var(--sa-on-accent);
+  --bs-btn-bg: var(--sa-accent);
+  --bs-btn-border-color: var(--sa-accent);
+  --bs-btn-hover-color: var(--sa-on-accent);
+  --bs-btn-hover-bg: var(--sa-accent-hover);
+  --bs-btn-hover-border-color: var(--sa-accent-hover);
+  --bs-btn-active-color: var(--sa-on-accent);
+  --bs-btn-active-bg: var(--sa-accent);
+  --bs-btn-active-border-color: var(--sa-accent);
+  --bs-btn-disabled-color: var(--sa-on-accent);
+  --bs-btn-disabled-bg: var(--sa-accent);
+  --bs-btn-disabled-border-color: var(--sa-accent);
+  --bs-btn-focus-shadow-rgb: 128, 128, 128;
 
   &:hover {
     transform: translateY(-1px);
-    box-shadow: $box-shadow;
+    box-shadow: var(--sa-shadow);
   }
 }
 
 .btn-outline-primary,
 .btn-outline-dark {
-  --bs-btn-border-color: #{rgba(17, 17, 17, 0.16)};
+  --bs-btn-color: var(--sa-text);
+  --bs-btn-border-color: var(--sa-line-strong);
+  --bs-btn-hover-color: var(--sa-on-accent);
+  --bs-btn-hover-bg: var(--sa-accent);
+  --bs-btn-hover-border-color: var(--sa-accent);
+  --bs-btn-active-color: var(--sa-on-accent);
+  --bs-btn-active-bg: var(--sa-accent);
+  --bs-btn-active-border-color: var(--sa-accent);
+  --bs-btn-disabled-color: var(--sa-muted);
+  --bs-btn-disabled-border-color: var(--sa-line);
+  --bs-btn-focus-shadow-rgb: 128, 128, 128;
 }
 
 .btn-ghost-light {
@@ -141,13 +208,40 @@ main {
   justify-content: center;
 }
 
+.theme-toggle {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid $linea-scura;
+  background: transparent;
+  color: rgba(255, 255, 255, 0.78);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  &:hover,
+  &:focus-visible {
+    color: $carbone;
+    background: $ottico;
+    border-color: $ottico;
+  }
+
+  svg {
+    transition: transform 0.6s $ease-lusso;
+  }
+
+  &:hover svg {
+    transform: rotate(-20deg);
+  }
+}
+
 // ---------------------------------------------------------------------------
 // Form
 // ---------------------------------------------------------------------------
 .form-control,
 .form-select {
   &:hover:not(:focus):not(:disabled) {
-    border-color: rgba(17, 17, 17, 0.24);
+    border-color: var(--sa-line-strong);
   }
 }
 
@@ -165,46 +259,116 @@ main {
   padding-right: $input-padding-x;
 }
 
+.input-group-text {
+  background: var(--sa-well);
+  border-color: var(--bs-border-color);
+  color: var(--sa-muted);
+}
+
+.input-group-btn {
+  border-color: var(--bs-border-color);
+}
+
+.input-group > .btn {
+  border-radius: 0 $border-radius $border-radius 0;
+}
+
+.link-underline {
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  text-decoration-color: var(--sa-line-strong);
+
+  &:hover {
+    text-decoration-color: var(--sa-text);
+  }
+}
+
 // ---------------------------------------------------------------------------
-// Alert e badge monocromatici
+// Alert, badge, tooltip, paginazione, dropdown, modali: monocromatici e legati al tema
 // ---------------------------------------------------------------------------
 .alert {
-  border: 1px solid $linea-chiara;
-  background: $perla;
-  color: $carbone;
+  border: 1px solid var(--sa-line);
+  background: var(--sa-well);
+  color: var(--sa-text);
 }
 
 .alert-danger {
-  border-color: rgba(17, 17, 17, 0.4);
-  background: $ottico;
+  border-color: var(--sa-line-strong);
+  background: var(--sa-surface);
 }
 
 .alert-dark {
-  background: $carbone;
+  background: var(--sa-deep);
   color: $ottico;
-  border-color: $carbone;
+  border-color: var(--sa-deep);
 }
 
-.badge.badge-soft {
-  background: $perla !important;
-  color: $carbone;
-  border: 1px solid $linea-chiara;
-  font-weight: 500;
-  letter-spacing: 0.06em;
+.badge.bg-dark {
+  background: var(--sa-accent) !important;
+  color: var(--sa-on-accent);
 }
 
 // Badge di react-bootstrap aggiunge bg-primary (con !important): qui va sovrascritto
 .badge.badge-outline {
   background: transparent !important;
-  color: $grafite;
-  border: 1px solid rgba(17, 17, 17, 0.16);
+  color: var(--sa-muted);
+  border: 1px solid var(--sa-line-strong);
 }
 
-// ---------------------------------------------------------------------------
-// Modali
-// ---------------------------------------------------------------------------
+.tooltip {
+  --bs-tooltip-bg: var(--sa-accent);
+  --bs-tooltip-color: var(--sa-on-accent);
+  --bs-tooltip-border-radius: #{$border-radius};
+  font-size: 0.75rem;
+}
+
+.pagination {
+  --bs-pagination-padding-x: 0;
+  --bs-pagination-color: var(--sa-text);
+  --bs-pagination-bg: var(--sa-surface);
+  --bs-pagination-border-color: var(--sa-line);
+  --bs-pagination-hover-color: var(--sa-text);
+  --bs-pagination-hover-bg: var(--sa-well);
+  --bs-pagination-hover-border-color: var(--sa-line-strong);
+  --bs-pagination-focus-color: var(--sa-text);
+  --bs-pagination-focus-bg: var(--sa-well);
+  --bs-pagination-active-color: var(--sa-on-accent);
+  --bs-pagination-active-bg: var(--sa-accent);
+  --bs-pagination-active-border-color: var(--sa-accent);
+  --bs-pagination-disabled-color: var(--sa-subtle);
+  --bs-pagination-disabled-bg: var(--sa-surface);
+  --bs-pagination-disabled-border-color: var(--sa-line);
+  flex-wrap: wrap;
+
+  .page-link {
+    min-width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $border-radius-pill !important;
+    margin: 0 2px;
+  }
+}
+
+.dropdown-menu {
+  --bs-dropdown-bg: var(--sa-surface);
+  --bs-dropdown-border-color: var(--sa-line);
+  --bs-dropdown-link-color: var(--sa-text);
+  --bs-dropdown-link-hover-bg: var(--sa-well);
+  --bs-dropdown-link-hover-color: var(--sa-text);
+  --bs-dropdown-link-active-bg: var(--sa-accent);
+  --bs-dropdown-link-active-color: var(--sa-on-accent);
+  --bs-dropdown-box-shadow: var(--sa-shadow);
+}
+
+.modal {
+  --bs-modal-bg: var(--sa-surface);
+  --bs-modal-border-color: var(--sa-line);
+}
+
 .modal-content {
-  box-shadow: $box-shadow-lg;
+  box-shadow: var(--sa-shadow-lg);
 }
 
 .modal.fade .modal-dialog {
@@ -219,6 +383,11 @@ main {
 .modal-title {
   font-family: $headings-font-family;
   font-size: 1.75rem;
+}
+
+.offcanvas {
+  --bs-offcanvas-bg: var(--sa-surface);
+  --bs-offcanvas-border-color: var(--sa-line);
 }
 
 // ---------------------------------------------------------------------------
@@ -239,9 +408,9 @@ main {
 }
 
 .app-navbar {
-  background: rgba(17, 17, 17, 0.96);
+  background: var(--sa-deep);
   backdrop-filter: saturate(140%) blur(12px);
-  border-bottom: 1px solid $linea-scura;
+  border-bottom: 1px solid var(--sa-deep-line);
   padding-top: 0.9rem;
   padding-bottom: 0.9rem;
 
@@ -287,10 +456,11 @@ main {
 }
 
 .app-footer {
-  background: $carbone;
+  background: var(--sa-deep);
   color: $ottico;
   padding: 4rem 0 3rem;
   margin-top: 6rem;
+  border-top: 1px solid var(--sa-deep-line);
   border-top-left-radius: $border-radius-xxl;
   border-top-right-radius: $border-radius-xxl;
 
@@ -317,7 +487,7 @@ main {
 
 .page-header {
   padding: 3.5rem 0 2.5rem;
-  border-bottom: 1px solid $linea-chiara;
+  border-bottom: 1px solid var(--sa-line);
   margin-bottom: 2.5rem;
 }
 
@@ -328,10 +498,10 @@ main {
   font-size: 0.78rem;
   letter-spacing: 0.14em;
   text-transform: uppercase;
-  color: $grafite;
+  color: var(--sa-muted);
 
   &:hover {
-    color: $carbone;
+    color: var(--sa-text);
     gap: 0.75rem;
   }
 }
@@ -340,21 +510,29 @@ main {
   padding: 4rem 2rem;
 }
 
+// Superficie scura (pannelli "plancia"): deve vincere sul fondo di .surface
+.surface.bg-carbone {
+  background: var(--sa-deep);
+  color: $ottico;
+  border-color: var(--sa-deep-line);
+  box-shadow: var(--sa-shadow-lg);
+}
+
 // ---------------------------------------------------------------------------
 // Autenticazione
 // ---------------------------------------------------------------------------
 .auth-shell {
-  border: 1px solid $linea-chiara;
+  border: 1px solid var(--sa-line);
   border-radius: $border-radius-xxl;
   overflow: hidden;
-  box-shadow: $box-shadow;
+  box-shadow: var(--sa-shadow);
   min-height: 620px;
 }
 
 .auth-aside {
   background:
     radial-gradient(120% 80% at 0% 100%, rgba(255, 255, 255, 0.06), transparent 60%),
-    $carbone;
+    var(--sa-deep);
   color: $ottico;
   padding: 3.5rem;
   flex-direction: column;
@@ -379,22 +557,12 @@ main {
   align-items: center;
   justify-content: center;
   padding: 3rem 1.5rem;
-  background: $ottico;
+  background: var(--sa-surface);
 }
 
 .auth-form {
   width: 100%;
   max-width: 420px;
-}
-
-.link-underline {
-  text-decoration: underline;
-  text-underline-offset: 3px;
-  text-decoration-color: rgba(17, 17, 17, 0.24);
-
-  &:hover {
-    text-decoration-color: $carbone;
-  }
 }
 
 // ---------------------------------------------------------------------------
@@ -404,8 +572,8 @@ main {
   width: 72px;
   height: 72px;
   border-radius: 50%;
-  background: $carbone;
-  color: $ottico;
+  background: var(--sa-accent);
+  color: var(--sa-on-accent);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -418,13 +586,13 @@ main {
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 1px;
-  background: $linea-chiara;
-  border: 1px solid $linea-chiara;
+  background: var(--sa-line);
+  border: 1px solid var(--sa-line);
   border-radius: $border-radius-lg;
   overflow: hidden;
 
   > div {
-    background: $ottico;
+    background: var(--sa-well);
     padding: 1.1rem 1.25rem;
   }
 
@@ -433,8 +601,10 @@ main {
     font-weight: 500;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: $grafite;
+    color: var(--sa-muted);
     margin-bottom: 0.35rem;
+    // Le etichette lunghe (es. CHILOMETRAGGIO) vanno a capo invece di sbordare
+    overflow-wrap: anywhere;
   }
 
   dd {
@@ -449,10 +619,11 @@ main {
 // ---------------------------------------------------------------------------
 .hero {
   background:
-    radial-gradient(90% 120% at 100% 0%, rgba(255, 255, 255, 0.07), transparent 55%),
-    $carbone;
+    radial-gradient(90% 120% at 100% 0%, rgba(255, 255, 255, 0.08), transparent 55%),
+    var(--sa-deep);
   color: $ottico;
   padding: 6rem 0 9rem;
+  border-bottom: 1px solid var(--sa-deep-line);
   border-bottom-left-radius: $border-radius-xxl;
   border-bottom-right-radius: $border-radius-xxl;
 }
@@ -499,7 +670,7 @@ main {
     left: 1rem;
     top: 50%;
     transform: translateY(-50%);
-    color: $argento;
+    color: var(--sa-subtle);
     pointer-events: none;
   }
 
@@ -519,18 +690,19 @@ main {
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: $ottico;
-  border: 1px solid $linea-chiara;
+  background: var(--sa-surface);
+  border: 1px solid var(--sa-line);
   border-radius: $border-radius-xl;
   padding: 0.6rem;
-  color: $carbone;
+  color: var(--sa-text);
+  box-shadow: $box-shadow-sm;
   transition: $transition-lusso;
 
   &:hover {
-    color: $carbone;
+    color: var(--sa-text);
     transform: translateY(-4px);
-    box-shadow: $box-shadow-lg;
-    border-color: rgba(17, 17, 17, 0.12);
+    box-shadow: var(--sa-shadow-lg);
+    border-color: var(--sa-line-strong);
 
     .car-card-media img {
       transform: scale(1.04);
@@ -543,7 +715,7 @@ main {
   aspect-ratio: 4 / 3;
   border-radius: 16px;
   overflow: hidden;
-  background: $perla;
+  background: var(--sa-well);
 
   img {
     width: 100%;
@@ -575,10 +747,9 @@ main {
   display: flex;
   align-items: baseline;
   justify-content: space-between;
-  margin-top: auto;
   padding-top: 1.25rem;
-  border-top: 1px solid $linea-chiara;
-  margin-top: 1.25rem;
+  border-top: 1px solid var(--sa-line);
+  margin-top: auto;
 }
 
 .car-card-price {
@@ -591,24 +762,24 @@ main {
   width: 40px;
   height: 40px;
   border-radius: 50%;
-  border: 1px solid rgba(255, 255, 255, 0.6);
-  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid var(--sa-line);
+  background: var(--sa-glass);
   backdrop-filter: blur(8px);
-  color: $carbone;
+  color: var(--sa-text);
   display: inline-flex;
   align-items: center;
   justify-content: center;
   transition: $transition-lusso;
 
   &:hover {
-    background: $ottico;
+    background: var(--sa-surface);
     transform: scale(1.08);
   }
 
   &.is-active {
-    background: $carbone;
-    border-color: $carbone;
-    color: $ottico;
+    background: var(--sa-accent);
+    border-color: var(--sa-accent);
+    color: var(--sa-on-accent);
   }
 
   &:disabled {
@@ -623,23 +794,8 @@ main {
   display: flex;
   align-items: center;
   justify-content: center;
-  background: linear-gradient(135deg, $perla, $gray-200);
-  color: $argento;
-}
-
-.pagination {
-  --bs-pagination-padding-x: 0;
-  flex-wrap: wrap;
-
-  .page-link {
-    min-width: 42px;
-    height: 42px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: $border-radius-pill !important;
-    margin: 0 2px;
-  }
+  background: linear-gradient(135deg, var(--sa-well), var(--sa-bg));
+  color: var(--sa-subtle);
 }
 
 // ---------------------------------------------------------------------------
@@ -648,7 +804,7 @@ main {
 .gallery-main {
   border-radius: $border-radius-xl;
   overflow: hidden;
-  background: $perla;
+  background: var(--sa-well);
   aspect-ratio: 16 / 10;
 
   .carousel-inner,
@@ -688,9 +844,9 @@ main {
   height: 68px;
   border-radius: 12px;
   overflow: hidden;
-  border: 1px solid $linea-chiara;
+  border: 1px solid var(--sa-line);
   padding: 0;
-  background: $perla;
+  background: var(--sa-well);
   opacity: 0.55;
 
   img {
@@ -705,7 +861,7 @@ main {
   }
 
   &.is-active {
-    border-color: $carbone;
+    border-color: var(--sa-text);
   }
 }
 
@@ -734,7 +890,7 @@ main {
 .detail-description {
   margin-top: 5rem;
   padding-top: 3rem;
-  border-top: 1px solid $linea-chiara;
+  border-top: 1px solid var(--sa-line);
 }
 
 .detail-text {
@@ -752,13 +908,14 @@ main {
   grid-template-columns: 1fr;
   gap: 1.25rem;
   padding: 0.75rem;
-  background: $ottico;
-  border: 1px solid $linea-chiara;
+  background: var(--sa-surface);
+  border: 1px solid var(--sa-line);
   border-radius: $border-radius-xl;
+  box-shadow: $box-shadow-sm;
   transition: $transition-lusso;
 
   &:hover {
-    box-shadow: $box-shadow;
+    box-shadow: var(--sa-shadow);
   }
 
   @include media-breakpoint-up(md) {
@@ -767,10 +924,10 @@ main {
   }
 
   h2 a {
-    color: $carbone;
+    color: var(--sa-text);
 
     &:hover {
-      color: $grafite;
+      color: var(--sa-muted);
     }
   }
 
@@ -787,7 +944,7 @@ main {
   aspect-ratio: 4 / 3;
   border-radius: 16px;
   overflow: hidden;
-  background: $perla;
+  background: var(--sa-well);
 
   img {
     width: 100%;
@@ -811,25 +968,19 @@ main {
   flex-direction: column;
   gap: 1rem;
   padding: 1.25rem;
-  background: $perla;
+  background: var(--sa-well);
   border-radius: $border-radius-lg;
   min-width: 240px;
-}
-
-.input-group-text {
-  background: $perla;
-  border-color: rgba(17, 17, 17, 0.12);
-  color: $grafite;
 }
 
 // ---------------------------------------------------------------------------
 // Area admin
 // ---------------------------------------------------------------------------
 .table-surface {
-  background: $ottico;
-  border: 1px solid $linea-chiara;
+  background: var(--sa-surface);
+  border: 1px solid var(--sa-line);
   border-radius: $border-radius-xl;
-  box-shadow: $box-shadow;
+  box-shadow: var(--sa-shadow);
   overflow: hidden;
 
   .table-responsive {
@@ -839,15 +990,19 @@ main {
 
 .admin-table {
   --bs-table-bg: transparent;
+  --bs-table-color: var(--sa-text);
+  --bs-table-border-color: var(--sa-line);
+  --bs-table-hover-bg: var(--sa-well);
+  --bs-table-hover-color: var(--sa-text);
 
   thead th {
     font-size: 0.7rem;
     font-weight: 500;
     letter-spacing: 0.16em;
     text-transform: uppercase;
-    color: $grafite;
-    background: $perla;
-    border-bottom: 1px solid $linea-chiara;
+    color: var(--sa-muted);
+    background: var(--sa-well);
+    border-bottom: 1px solid var(--sa-line);
     white-space: nowrap;
   }
 
@@ -864,10 +1019,10 @@ main {
   }
 
   td a {
-    color: $carbone;
+    color: var(--sa-text);
 
     &:hover {
-      color: $grafite;
+      color: var(--sa-muted);
     }
   }
 
@@ -887,7 +1042,7 @@ main {
   height: 52px;
   border-radius: 12px;
   overflow: hidden;
-  background: $perla;
+  background: var(--sa-well);
   flex-shrink: 0;
 
   img {
@@ -903,13 +1058,7 @@ main {
 }
 
 .btn-icon.btn-outline-dark {
-  --bs-btn-border-color: #{$linea-chiara};
-}
-
-.tooltip {
-  --bs-tooltip-bg: #{$carbone};
-  --bs-tooltip-border-radius: #{$border-radius};
-  font-size: 0.75rem;
+  --bs-btn-border-color: var(--sa-line);
 }
 
 .form-section {
@@ -919,12 +1068,9 @@ main {
   @include media-breakpoint-up(md) {
     padding: 2.25rem;
   }
-
-  &.bg-carbone {
-    border-color: $carbone;
-  }
 }
 
+// Il pannello VIN resta scuro in entrambi i temi: colori fissi
 .vin-input {
   background: $carbone-soft;
   border-color: $linea-scura;
@@ -954,15 +1100,7 @@ main {
   justify-content: space-between;
   align-items: center;
   padding: 1rem 1.25rem;
-  box-shadow: $box-shadow-lg;
-}
-
-.input-group-btn {
-  border-color: rgba(17, 17, 17, 0.12);
-}
-
-.input-group > .btn {
-  border-radius: 0 $border-radius $border-radius 0;
+  box-shadow: var(--sa-shadow-lg);
 }
 
 .img-grid {
@@ -977,8 +1115,8 @@ main {
   aspect-ratio: 4 / 3;
   border-radius: 16px;
   overflow: hidden;
-  background: $perla;
-  border: 1px solid $linea-chiara;
+  background: var(--sa-well);
+  border: 1px solid var(--sa-line);
 
   img {
     width: 100%;
@@ -995,8 +1133,8 @@ main {
   position: absolute;
   top: 0.5rem;
   left: 0.5rem;
-  background: $carbone;
-  color: $ottico;
+  background: var(--sa-accent);
+  color: var(--sa-on-accent);
   font-size: 0.65rem;
   letter-spacing: 0.12em;
   text-transform: uppercase;
@@ -1022,15 +1160,15 @@ main {
     height: 30px;
     border-radius: 50%;
     border: 0;
-    background: rgba(255, 255, 255, 0.92);
-    color: $carbone;
+    background: var(--sa-glass);
+    color: var(--sa-text);
     display: inline-flex;
     align-items: center;
     justify-content: center;
 
     &:hover:not(:disabled) {
-      background: $carbone;
-      color: $ottico;
+      background: var(--sa-accent);
+      color: var(--sa-on-accent);
     }
 
     &:disabled {
@@ -1039,12 +1177,101 @@ main {
   }
 }
 
-// Superficie scura (pannelli "plancia"): deve vincere sul fondo bianco di .surface
-.surface.bg-carbone {
-  background: $carbone;
-  color: $ottico;
-  border-color: $carbone;
-  box-shadow: $box-shadow-lg;
+// Area admin da mobile: card al posto della tabella
+.admin-cards {
+  display: flex;
+  flex-direction: column;
+  gap: 0.75rem;
+}
+
+.admin-card {
+  background: var(--sa-surface);
+  border: 1px solid var(--sa-line);
+  border-radius: $border-radius-xl;
+  padding: 0.75rem;
+  box-shadow: $box-shadow-sm;
+}
+
+.admin-card-main {
+  display: flex;
+  align-items: center;
+  gap: 0.9rem;
+  color: var(--sa-text);
+
+  &:hover {
+    color: var(--sa-text);
+  }
+}
+
+.admin-card-footer {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem;
+  margin-top: 0.75rem;
+  padding-top: 0.75rem;
+  border-top: 1px solid var(--sa-line);
+}
+
+// Barra azioni del form: da mobile resta su una riga
+.form-actions-main {
+  display: flex;
+  gap: 0.5rem;
+  justify-content: flex-end;
+}
+
+// ---------------------------------------------------------------------------
+// Filtri: barra compatta + pannello dal basso sotto lg
+// ---------------------------------------------------------------------------
+.filter-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.75rem;
+}
+
+.filter-count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 6px;
+  border-radius: $border-radius-pill;
+  background: var(--sa-accent);
+  color: var(--sa-on-accent);
+  font-size: 0.7rem;
+}
+
+.btn-outline-dark:hover .filter-count {
+  background: var(--sa-on-accent);
+  color: var(--sa-accent);
+}
+
+.filter-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  justify-content: flex-end;
+  margin-top: 1rem;
+}
+
+.offcanvas-backdrop.show {
+  opacity: 0.45;
+}
+
+// Su fondo scuro il velo #111 non si vede: nel tema scuro si usa nero pieno, più coprente
+[data-bs-theme='dark'] {
+  .modal-backdrop,
+  .offcanvas-backdrop {
+    --bs-backdrop-bg: #000;
+  }
+
+  .modal-backdrop.show,
+  .offcanvas-backdrop.show {
+    opacity: 0.6;
+  }
 }
 
 // ---------------------------------------------------------------------------
@@ -1054,8 +1281,8 @@ main {
   min-width: 0;
 }
 
-// Menu della navbar collassata: voci separate da filetti, sottolineatura corta sulla voce attiva
 @include media-breakpoint-down(lg) {
+  // Menu della navbar collassata: voci separate da filetti, sottolineatura corta sulla voce attiva
   .app-navbar {
     .navbar-collapse {
       padding: 0.75rem 0 0.5rem;
@@ -1102,44 +1329,7 @@ main {
       }
     }
   }
-}
 
-// Filtri: barra compatta + pannello dal basso sotto lg
-.filter-toolbar {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 1rem;
-  padding: 0.75rem 0.75rem 0.75rem 0.75rem;
-}
-
-.filter-count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 20px;
-  height: 20px;
-  padding: 0 6px;
-  border-radius: $border-radius-pill;
-  background: $carbone;
-  color: $ottico;
-  font-size: 0.7rem;
-}
-
-.btn-outline-dark:hover .filter-count {
-  background: $ottico;
-  color: $carbone;
-}
-
-.filter-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 0.5rem;
-  justify-content: flex-end;
-  margin-top: 1rem;
-}
-
-@include media-breakpoint-down(lg) {
   .filter-offcanvas.offcanvas-bottom {
     height: auto;
     max-height: 88vh;
@@ -1173,15 +1363,6 @@ main {
   }
 }
 
-.offcanvas-backdrop.show {
-  opacity: 0.45;
-}
-
-// Schede tecniche: le etichette lunghe (es. CHILOMETRAGGIO) vanno a capo invece di sbordare
-.spec-grid dt {
-  overflow-wrap: anywhere;
-}
-
 @include media-breakpoint-down(sm) {
   .spec-grid > div {
     padding: 0.9rem 1rem;
@@ -1211,51 +1392,7 @@ main {
   .auth-shell {
     min-height: 0;
   }
-}
 
-// Area admin da mobile: card al posto della tabella
-.admin-cards {
-  display: flex;
-  flex-direction: column;
-  gap: 0.75rem;
-}
-
-.admin-card {
-  background: $ottico;
-  border: 1px solid $linea-chiara;
-  border-radius: $border-radius-xl;
-  padding: 0.75rem;
-}
-
-.admin-card-main {
-  display: flex;
-  align-items: center;
-  gap: 0.9rem;
-  color: $carbone;
-
-  &:hover {
-    color: $carbone;
-  }
-}
-
-.admin-card-footer {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 0.75rem;
-  margin-top: 0.75rem;
-  padding-top: 0.75rem;
-  border-top: 1px solid $linea-chiara;
-}
-
-// Barra azioni del form: da mobile resta su una riga
-.form-actions-main {
-  display: flex;
-  gap: 0.5rem;
-  justify-content: flex-end;
-}
-
-@include media-breakpoint-down(sm) {
   .form-actions {
     padding: 0.6rem;
     bottom: 0.5rem;
