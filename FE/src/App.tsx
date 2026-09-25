@@ -1,6 +1,8 @@
 import { Route, Routes } from 'react-router-dom'
-import { GuestOnly, RequireAuth } from './components/Guards'
+import { GuestOnly, RequireAdmin, RequireAuth } from './components/Guards'
 import Layout from './components/Layout'
+import AdminAnnunci from './pages/admin/AdminAnnunci'
+import AdminFormAnnuncio from './pages/admin/AdminFormAnnuncio'
 import Catalogo from './pages/Catalogo'
 import Dettaglio from './pages/Dettaglio'
 import Login from './pages/Login'
@@ -32,6 +34,12 @@ export default function App() {
         <Route element={<RequireAuth />}>
           <Route path="/profilo" element={<Profilo />} />
           <Route path="/preferiti" element={<Preferiti />} />
+        </Route>
+
+        <Route element={<RequireAdmin />}>
+          <Route path="/admin" element={<AdminAnnunci />} />
+          <Route path="/admin/auto/nuova" element={<AdminFormAnnuncio />} />
+          <Route path="/admin/auto/:id" element={<AdminFormAnnuncio />} />
         </Route>
 
         <Route path="*" element={<NotFound />} />

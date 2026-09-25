@@ -185,16 +185,17 @@ main {
   border-color: $carbone;
 }
 
-.badge-soft {
-  background: $perla;
+.badge.badge-soft {
+  background: $perla !important;
   color: $carbone;
   border: 1px solid $linea-chiara;
   font-weight: 500;
   letter-spacing: 0.06em;
 }
 
-.badge-outline {
-  background: transparent;
+// Badge di react-bootstrap aggiunge bg-primary (con !important): qui va sovrascritto
+.badge.badge-outline {
+  background: transparent !important;
   color: $grafite;
   border: 1px solid rgba(17, 17, 17, 0.16);
 }
@@ -819,4 +820,229 @@ main {
   background: $perla;
   border-color: rgba(17, 17, 17, 0.12);
   color: $grafite;
+}
+
+// ---------------------------------------------------------------------------
+// Area admin
+// ---------------------------------------------------------------------------
+.table-surface {
+  background: $ottico;
+  border: 1px solid $linea-chiara;
+  border-radius: $border-radius-xl;
+  box-shadow: $box-shadow;
+  overflow: hidden;
+
+  .table-responsive {
+    margin: 0;
+  }
+}
+
+.admin-table {
+  --bs-table-bg: transparent;
+
+  thead th {
+    font-size: 0.7rem;
+    font-weight: 500;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: $grafite;
+    background: $perla;
+    border-bottom: 1px solid $linea-chiara;
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    transition: $transition-lusso;
+  }
+
+  tbody tr:last-child td {
+    border-bottom: 0;
+  }
+
+  td:first-child {
+    min-width: 260px;
+  }
+
+  td a {
+    color: $carbone;
+
+    &:hover {
+      color: $grafite;
+    }
+  }
+
+  th:first-child,
+  td:first-child {
+    padding-left: 1.5rem;
+  }
+
+  th:last-child,
+  td:last-child {
+    padding-right: 1.5rem;
+  }
+}
+
+.admin-thumb {
+  width: 72px;
+  height: 52px;
+  border-radius: 12px;
+  overflow: hidden;
+  background: $perla;
+  flex-shrink: 0;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .car-image-placeholder svg {
+    width: 22px;
+    height: 22px;
+  }
+}
+
+.btn-icon.btn-outline-dark {
+  --bs-btn-border-color: #{$linea-chiara};
+}
+
+.tooltip {
+  --bs-tooltip-bg: #{$carbone};
+  --bs-tooltip-border-radius: #{$border-radius};
+  font-size: 0.75rem;
+}
+
+.form-section {
+  padding: 1.75rem;
+  margin-bottom: 1.25rem;
+
+  @include media-breakpoint-up(md) {
+    padding: 2.25rem;
+  }
+
+  &.bg-carbone {
+    border-color: $carbone;
+  }
+}
+
+.vin-input {
+  background: $carbone-soft;
+  border-color: $linea-scura;
+  color: $ottico;
+  letter-spacing: 0.12em;
+
+  &::placeholder {
+    color: rgba(255, 255, 255, 0.35);
+    letter-spacing: normal;
+  }
+
+  &:focus {
+    background: $carbone-soft;
+    color: $ottico;
+    border-color: rgba(255, 255, 255, 0.5);
+    box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.08);
+  }
+}
+
+.form-actions {
+  position: sticky;
+  bottom: 1rem;
+  z-index: 10;
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+  justify-content: space-between;
+  align-items: center;
+  padding: 1rem 1.25rem;
+  box-shadow: $box-shadow-lg;
+}
+
+.input-group-btn {
+  border-color: rgba(17, 17, 17, 0.12);
+}
+
+.input-group > .btn {
+  border-radius: 0 $border-radius $border-radius 0;
+}
+
+.img-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+  gap: 0.9rem;
+}
+
+.img-tile {
+  position: relative;
+  margin: 0;
+  aspect-ratio: 4 / 3;
+  border-radius: 16px;
+  overflow: hidden;
+  background: $perla;
+  border: 1px solid $linea-chiara;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &:hover .img-tile-actions {
+    opacity: 1;
+  }
+}
+
+.img-tile-badge {
+  position: absolute;
+  top: 0.5rem;
+  left: 0.5rem;
+  background: $carbone;
+  color: $ottico;
+  font-size: 0.65rem;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  padding: 0.3rem 0.65rem;
+  border-radius: $border-radius-pill;
+}
+
+.img-tile-actions {
+  position: absolute;
+  bottom: 0.5rem;
+  right: 0.5rem;
+  display: flex;
+  gap: 0.3rem;
+  opacity: 0;
+  transition: $transition-lusso;
+
+  @media (hover: none) {
+    opacity: 1;
+  }
+
+  button {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    border: 0;
+    background: rgba(255, 255, 255, 0.92);
+    color: $carbone;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover:not(:disabled) {
+      background: $carbone;
+      color: $ottico;
+    }
+
+    &:disabled {
+      opacity: 0.35;
+    }
+  }
+}
+
+// Superficie scura (pannelli "plancia"): deve vincere sul fondo bianco di .surface
+.surface.bg-carbone {
+  background: $carbone;
+  color: $ottico;
+  border-color: $carbone;
+  box-shadow: $box-shadow-lg;
 }
