@@ -46,7 +46,7 @@ public class DataSeeder implements ApplicationRunner {
         AppProperties.Admin conf = props.admin();
         String email = User.normalizzaEmail(conf.email());
 
-        if (userRepository.existsByEmail(email) || userRepository.existsByUsername(conf.username())) {
+        if (userRepository.existsByEmail(email) || userRepository.existsByUsernameIgnoreCase(conf.username())) {
             log.info("Super admin già presente ({})", email);
             return;
         }

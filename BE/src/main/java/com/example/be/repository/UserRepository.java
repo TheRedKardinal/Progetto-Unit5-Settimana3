@@ -11,9 +11,9 @@ public interface UserRepository extends JpaRepository<User, UUID> {
     /** L'email va passata già normalizzata (vedi {@link User#normalizzaEmail(String)}). */
     Optional<User> findByEmail(String email);
 
-    Optional<User> findByUsername(String username);
+    Optional<User> findByUsernameIgnoreCase(String username);
 
     boolean existsByEmail(String email);
 
-    boolean existsByUsername(String username);
+    boolean existsByUsernameIgnoreCase(String username);
 }
