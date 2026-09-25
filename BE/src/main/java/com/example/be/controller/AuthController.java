@@ -5,10 +5,12 @@ import com.example.be.dto.auth.AuthResponse;
 import com.example.be.dto.auth.EmailRequest;
 import com.example.be.dto.auth.LoginRequest;
 import com.example.be.dto.auth.RegisterRequest;
+import com.example.be.dto.auth.ResetPasswordRequest;
 import com.example.be.dto.auth.TokenRequest;
 import com.example.be.dto.auth.UserResponse;
 import com.example.be.security.CurrentUser;
 import com.example.be.service.AuthService;
+import com.example.be.service.PasswordResetService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -27,6 +29,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class AuthController {
 
     private final AuthService authService;
+    private final PasswordResetService passwordResetService;
 
     @PostMapping("/register")
     @ResponseStatus(HttpStatus.CREATED)
@@ -55,5 +58,18 @@ public class AuthController {
     @GetMapping("/me")
     public UserResponse me(@AuthenticationPrincipal Jwt jwt) {
         return authService.me(CurrentUser.id(jwt));
+    }
+
+    @PostMapping("/forgot-password")
+    public MessageResponse forgotPassword(@Valid @RequestBody EmailRequest req) {
+        passwordResetService.richiediReset(req.email());
+        return new MessageResponse(
+                "Se l'indirizzo è registrato, riceverai un'email con il link per reimpostare la password");
+    }
+
+    @PostMapping("/reset-password")
+    public MessageResponse resetPassword(@Valid @RequestBody ResetPasswordRequest req) {
+        passwordResetService.resetPassword(req.token(), req.nuovaPassword());
+        return new MessageResponse("Password aggiornata: ora puoi effettuare il login");
     }
 }
