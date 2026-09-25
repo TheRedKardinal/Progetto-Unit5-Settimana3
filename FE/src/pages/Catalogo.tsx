@@ -37,7 +37,7 @@ export default function Catalogo() {
       </section>
 
       <Container className="catalogo">
-        <FiltriAuto key={key} valori={valori} ordinamenti={ORDINAMENTI} onApply={applica} />
+        <FiltriAuto valori={valori} ordinamenti={ORDINAMENTI} onApply={applica} />
 
         <div className="d-flex align-items-baseline justify-content-between mt-5 mb-4">
           <h2 className="h3 mb-0">

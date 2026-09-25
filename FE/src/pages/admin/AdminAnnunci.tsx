@@ -65,6 +65,21 @@ export default function AdminAnnunci() {
     }
   }
 
+  const azioni = (car: CarSummaryResponse) => (
+    <div className="d-flex gap-2 justify-content-end">
+      <Link to={`/admin/auto/${car.id}`} className="btn btn-outline-dark btn-icon" aria-label="Modifica">
+        <Icon name="edit" size={18} />
+      </Link>
+      <AzioneIcona icon="euro" label="Cambia prezzo" onClick={() => setPrezzoDi(car)} />
+      <AzioneIcona
+        icon={car.statoAnnuncio === 'PUBBLICATO' ? 'eyeOff' : 'eye'}
+        label={car.statoAnnuncio === 'PUBBLICATO' ? 'Ritira (bozza)' : 'Pubblica'}
+        onClick={() => cambiaStato(car)}
+        disabled={inCorso === car.id}
+      />
+    </div>
+  )
+
   return (
     <Container>
       <PageHeader eyebrow="Area amministrazione" title="Annunci">
@@ -73,7 +88,7 @@ export default function AdminAnnunci() {
         </Link>
       </PageHeader>
 
-      <FiltriAuto key={key} valori={valori} ordinamenti={ORDINAMENTI} conStato onApply={applica} />
+      <FiltriAuto valori={valori} ordinamenti={ORDINAMENTI} conStato onApply={applica} />
 
       <div className="mt-4">
         <ErrorAlert message={error} onRetry={reload} />
@@ -98,7 +113,7 @@ export default function AdminAnnunci() {
           <p className="eyebrow mb-3">
             {data.totalElements} {data.totalElements === 1 ? 'annuncio' : 'annunci'}
           </p>
-          <div className="table-surface">
+          <div className="table-surface d-none d-md-block">
             <Table responsive hover className="admin-table mb-0 align-middle">
               <thead>
                 <tr>
@@ -134,24 +149,37 @@ export default function AdminAnnunci() {
                       <StatoBadge stato={car.statoAnnuncio} />
                     </td>
                     <td className="d-none d-lg-table-cell text-secondary small">{formatDataBreve(car.updatedAt)}</td>
-                    <td>
-                      <div className="d-flex gap-2 justify-content-end">
-                        <Link to={`/admin/auto/${car.id}`} className="btn btn-outline-dark btn-icon" aria-label="Modifica">
-                          <Icon name="edit" size={18} />
-                        </Link>
-                        <AzioneIcona icon="euro" label="Cambia prezzo" onClick={() => setPrezzoDi(car)} />
-                        <AzioneIcona
-                          icon={car.statoAnnuncio === 'PUBBLICATO' ? 'eyeOff' : 'eye'}
-                          label={car.statoAnnuncio === 'PUBBLICATO' ? 'Ritira (bozza)' : 'Pubblica'}
-                          onClick={() => cambiaStato(car)}
-                          disabled={inCorso === car.id}
-                        />
-                      </div>
-                    </td>
+                    <td>{azioni(car)}</td>
                   </tr>
                 ))}
               </tbody>
             </Table>
+          </div>
+
+          {/* Da mobile la tabella diventa una lista di card, senza scroll orizzontale */}
+          <div className="admin-cards d-md-none">
+            {data.content.map((car) => (
+              <article key={car.id} className="admin-card">
+                <Link to={`/admin/auto/${car.id}`} className="admin-card-main">
+                  <div className="admin-thumb">
+                    <CarImage src={car.copertina} alt="" />
+                  </div>
+                  <div className="min-w-0">
+                    <span className="fw-medium d-block">{car.titolo}</span>
+                    <span className="small text-secondary">
+                      {car.anno} · {formatKm(car.chilometraggio)}
+                    </span>
+                  </div>
+                </Link>
+                <div className="admin-card-footer">
+                  <div className="d-flex align-items-center gap-2">
+                    <span className="fw-medium">{formatPrezzo(car.prezzo)}</span>
+                    <StatoBadge stato={car.statoAnnuncio} />
+                  </div>
+                  {azioni(car)}
+                </div>
+              </article>
+            ))}
           </div>
           <Paginazione page={page} totalPages={data.totalPages} onChange={vaiAPagina} />
         </div>

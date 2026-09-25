@@ -348,10 +348,10 @@ function FormAnnuncio({ iniziale }: { iniziale?: CarResponse }) {
         </section>
 
         <div className="form-actions surface">
-          <Link to="/admin" className="btn btn-outline-dark">
+          <Link to="/admin" className="btn btn-outline-dark d-none d-sm-inline-block">
             Annulla
           </Link>
-          <div className="d-flex flex-wrap gap-2 justify-content-end">
+          <div className="form-actions-main">
             {car && (
               <Button variant="outline-dark" onClick={cambiaStato} disabled={statoInCorso || submitting}>
                 {pubblicato ? 'Ritira (bozza)' : 'Pubblica'}
