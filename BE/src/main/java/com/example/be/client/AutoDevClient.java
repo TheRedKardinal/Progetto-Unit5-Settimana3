@@ -14,6 +14,7 @@ import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestClient;
 import org.springframework.web.client.RestClientResponseException;
 
+import java.math.BigDecimal;
 import java.net.http.HttpClient;
 import java.time.Duration;
 import java.util.List;
@@ -22,6 +23,7 @@ import java.util.Optional;
 /**
  * Client per le API di auto.dev (piano gratuito, quota limitata).
  * La chiave resta lato server: il frontend passa sempre da /api/admin/vin/{vin}.
+ * /listings è usato solo dal CatalogSeeder per il catalogo iniziale.
  */
 @Slf4j
 @Component
@@ -83,6 +85,31 @@ public class AutoDevClient {
         }
     }
 
+    /**
+     * GET /listings: annunci reali, filtrati per marca e fascia di prezzo (sintassi "min-max"),
+     * dal più caro. Il piano gratuito restituisce al massimo 20 risultati per pagina (page parte da 1).
+     */
+    public List<Listing> annunci(String marche, String fasciaPrezzo, int pagina, int limite) {
+        verificaConfigurazione();
+        try {
+            ListingsResponse res = restClient.get()
+                    .uri(u -> u.path("/listings")
+                            .queryParam("vehicle.make", marche)
+                            .queryParam("retailListing.price", fasciaPrezzo)
+                            .queryParam("sort", "price.desc")
+                            .queryParam("page", pagina)
+                            .queryParam("limit", limite)
+                            .build())
+                    .retrieve()
+                    .body(ListingsResponse.class);
+            return res == null || res.data() == null ? List.of() : res.data();
+        } catch (RestClientResponseException e) {
+            throw traduci(e);
+        } catch (ResourceAccessException e) {
+            throw nonRaggiungibile(e);
+        }
+    }
+
     private void verificaConfigurazione() {
         if (!configurato) {
             throw new ServizioEsternoException(HttpStatus.SERVICE_UNAVAILABLE,
@@ -131,5 +158,23 @@ public class AutoDevClient {
 
     @JsonIgnoreProperties(ignoreUnknown = true)
     record PhotosData(List<String> retail) {
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    record ListingsResponse(List<Listing> data) {
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record Listing(String vin, ListingVehicle vehicle, RetailListing retailListing) {
+    }
+
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record ListingVehicle(Integer year, String make, String model, String trim, String fuel, String engine,
+                                 String transmission, String drivetrain, String exteriorColor, String interiorColor) {
+    }
+
+    /** Prezzo in dollari, chilometraggio in miglia (annunci USA). */
+    @JsonIgnoreProperties(ignoreUnknown = true)
+    public record RetailListing(BigDecimal price, BigDecimal miles, String primaryImage) {
     }
 }

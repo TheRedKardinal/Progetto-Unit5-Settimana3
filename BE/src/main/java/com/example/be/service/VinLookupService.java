@@ -53,7 +53,7 @@ public class VinLookupService {
     }
 
     /** Deduzione prudente dalla descrizione del motore; null se non è chiara (l'admin sceglie a mano). */
-    static Carburante deduciCarburante(String motore) {
+    public static Carburante deduciCarburante(String motore) {
         if (motore == null || motore.isBlank()) {
             return null;
         }

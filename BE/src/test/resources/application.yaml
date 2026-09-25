@@ -34,3 +34,8 @@ app:
     username: admin
     email: admin@salone-auto.it
     password: admin-password-test
+  catalog-seed:
+    enabled: false
+    size: 50
+    marche: Porsche
+    fascia-prezzo: 90000-2000000

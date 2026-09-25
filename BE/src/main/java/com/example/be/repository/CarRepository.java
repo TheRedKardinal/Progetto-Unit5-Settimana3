@@ -11,4 +11,6 @@ import java.util.UUID;
 public interface CarRepository extends JpaRepository<Car, UUID>, JpaSpecificationExecutor<Car> {
 
     Optional<Car> findByIdAndStatoAnnuncio(UUID id, StatoAnnuncio statoAnnuncio);
+
+    boolean existsByVin(String vin);
 }

@@ -36,6 +36,7 @@ class AutoDevClientTest {
     private HttpServer server;
     private final Map<String, Risposta> risposte = new ConcurrentHashMap<>();
     private final Map<String, String> headerAuth = new ConcurrentHashMap<>();
+    private final Map<String, String> query = new ConcurrentHashMap<>();
     private AutoDevClient client;
 
     record Risposta(int status, String body) {
@@ -47,6 +48,7 @@ class AutoDevClientTest {
         server.createContext("/", exchange -> {
             String path = exchange.getRequestURI().getPath();
             headerAuth.put(path, String.valueOf(exchange.getRequestHeaders().getFirst("Authorization")));
+            query.put(path, String.valueOf(exchange.getRequestURI().getRawQuery()));
             Risposta r = risposte.getOrDefault(path, new Risposta(404, "{\"status\":404}"));
             byte[] body = r.body().getBytes(StandardCharsets.UTF_8);
             exchange.getResponseHeaders().add("Content-Type", "application/json");
@@ -102,6 +104,27 @@ class AutoDevClientTest {
         assertThat(client.foto("3GCUDHEL3NG668790")).isEmpty();
         risposte.put("/photos/3GCUDHEL3NG668790", new Risposta(200, "{\"data\":{\"retail\":[]}}"));
         assertThat(client.foto("3GCUDHEL3NG668790")).isEmpty();
+    }
+
+    @Test
+    void annunciPassaIFiltriELeggeData() {
+        risposte.put("/listings", new Risposta(200, """
+                {"data":[{"vin":"WP0AF2A99KS165242","vehicle":{"year":2019,"make":"Porsche","model":"911",
+                  "trim":"GT3 RS","fuel":"Premium Unleaded"},
+                  "retailListing":{"price":189900,"miles":"8120","primaryImage":"https://img.example/1.jpg"}}],
+                 "links":{},"total":1}
+                """));
+
+        var annunci = client.annunci("Porsche,Aston Martin", "90000-2000000", 2, 20);
+
+        assertThat(annunci).hasSize(1);
+        assertThat(annunci.getFirst().vehicle().make()).isEqualTo("Porsche");
+        assertThat(annunci.getFirst().retailListing().miles()).isEqualByComparingTo("8120");
+        assertThat(query.get("/listings"))
+                .contains("vehicle.make=Porsche,Aston%20Martin")
+                .contains("retailListing.price=90000-2000000")
+                .contains("page=2")
+                .contains("limit=20");
     }
 
     @Test
