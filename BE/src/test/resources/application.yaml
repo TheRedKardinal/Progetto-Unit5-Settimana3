@@ -1,0 +1,36 @@
+# Configurazione dei test: sostituisce quella principale (niente .env, niente Postgres, niente auto.dev reale)
+spring:
+  application:
+    name: BE-test
+  datasource:
+    url: jdbc:h2:mem:salone-test;MODE=PostgreSQL;DATABASE_TO_LOWER=TRUE;DEFAULT_NULL_ORDERING=HIGH;DB_CLOSE_DELAY=-1
+    username: sa
+    password:
+  jpa:
+    hibernate:
+      ddl-auto: create-drop
+    open-in-view: false
+  data:
+    web:
+      pageable:
+        max-page-size: 50
+  mail:
+    host: localhost
+    port: 2525
+
+app:
+  frontend-url: http://localhost:5173
+  mail-from: test@salone-auto.it
+  jwt:
+    secret: segreto-solo-per-i-test-lungo-almeno-32-caratteri
+    expiration: PT1H
+  autodev:
+    # Sovrascritto dai test che usano lo stub HTTP locale
+    base-url: http://localhost:1
+    api-key: chiave-finta
+  admin:
+    nome: Super
+    cognome: Admin
+    username: admin
+    email: admin@salone-auto.it
+    password: admin-password-test
