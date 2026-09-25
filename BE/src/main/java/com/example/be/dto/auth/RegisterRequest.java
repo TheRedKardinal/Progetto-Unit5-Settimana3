@@ -25,9 +25,8 @@ public record RegisterRequest(
         @Size(max = 255, message = "Email troppo lunga")
         String email,
 
-        // BCrypt considera al massimo 72 byte
         @NotBlank(message = "La password è obbligatoria")
-        @Size(min = 8, max = 72, message = "La password deve avere tra 8 e 72 caratteri")
+        @Size(min = 8, max = 16, message = "La password deve avere tra 8 e 16 caratteri")
         String password
 ) {
 }

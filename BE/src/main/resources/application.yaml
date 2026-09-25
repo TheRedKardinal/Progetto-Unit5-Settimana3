@@ -18,6 +18,11 @@ spring:
       hibernate:
         format_sql: true
 
+  data:
+    web:
+      pageable:
+        max-page-size: 50
+
   mail:
     host: ${MAIL_HOST:sandbox.smtp.mailtrap.io}
     port: ${MAIL_PORT:2525}
