@@ -1,14 +1,13 @@
-import { Container } from 'react-bootstrap'
+import { Route, Routes } from 'react-router-dom'
+import Layout from './components/Layout'
+import NotFound from './pages/NotFound'
 
-function App() {
+export default function App() {
   return (
-    <main>
-      <Container className="py-5">
-        <p className="eyebrow">Salone Auto</p>
-        <h1 className="display-4">In costruzione</h1>
-      </Container>
-    </main>
+    <Routes>
+      <Route element={<Layout />}>
+        <Route path="*" element={<NotFound />} />
+      </Route>
+    </Routes>
   )
 }
-
-export default App
