@@ -8,6 +8,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.math.BigDecimal;
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
@@ -31,6 +32,14 @@ public interface FavoriteRepository extends JpaRepository<Favorite, UUID> {
               and f.notificatoAt is null
             """)
     List<Favorite> findDaNotificare(@Param("carId") UUID carId, @Param("prezzo") BigDecimal prezzo);
+
+    /**
+     * Segna il preferito come notificato solo se non lo era già.
+     * Restituisce 1 a un solo chiamante anche con eventi concorrenti: evita email doppie.
+     */
+    @Modifying
+    @Query("update Favorite f set f.notificatoAt = :now where f.id = :id and f.notificatoAt is null")
+    int marcaNotificato(@Param("id") UUID id, @Param("now") Instant now);
 
     /** Il prezzo è tornato pari o sopra la soglia: la notifica potrà ripartire se riscende. */
     @Modifying
