@@ -26,6 +26,7 @@ export function useAsync<T>(fn: () => Promise<T>, key: string) {
       attivo = false
     }
     // fn cambia a ogni render: il caricamento dipende solo dalla chiave
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [fullKey])
 
   const reload = useCallback(() => setReloads((n) => n + 1), [])

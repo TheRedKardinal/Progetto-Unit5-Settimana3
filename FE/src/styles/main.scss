@@ -442,3 +442,303 @@ main {
     word-break: break-word;
   }
 }
+
+// ---------------------------------------------------------------------------
+// Catalogo
+// ---------------------------------------------------------------------------
+.hero {
+  background:
+    radial-gradient(90% 120% at 100% 0%, rgba(255, 255, 255, 0.07), transparent 55%),
+    $carbone;
+  color: $ottico;
+  padding: 6rem 0 9rem;
+  border-bottom-left-radius: $border-radius-xxl;
+  border-bottom-right-radius: $border-radius-xxl;
+}
+
+.hero-title {
+  font-size: clamp(3rem, 7vw, 5.75rem);
+  font-weight: 400;
+  line-height: 0.98;
+  margin-bottom: 1.75rem;
+
+  em {
+    font-style: italic;
+    color: rgba(255, 255, 255, 0.62);
+  }
+}
+
+.hero-lead {
+  max-width: 520px;
+  color: rgba(255, 255, 255, 0.62);
+  font-weight: 300;
+  font-size: 1.05rem;
+  margin: 0;
+}
+
+// La barra filtri si "incastra" sotto l'hero, come un pannello della plancia
+.catalogo .filter-bar {
+  margin-top: -5rem;
+  position: relative;
+}
+
+.filter-bar {
+  padding: 1.5rem;
+
+  @include media-breakpoint-up(lg) {
+    padding: 1.75rem 2rem;
+  }
+}
+
+.input-icon {
+  position: relative;
+
+  svg {
+    position: absolute;
+    left: 1rem;
+    top: 50%;
+    transform: translateY(-50%);
+    color: $argento;
+    pointer-events: none;
+  }
+
+  .form-control {
+    padding-left: 2.75rem;
+  }
+}
+
+.is-refreshing {
+  opacity: 0.55;
+  transition: $transition-lusso;
+  pointer-events: none;
+}
+
+// Card auto
+.car-card {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  background: $ottico;
+  border: 1px solid $linea-chiara;
+  border-radius: $border-radius-xl;
+  padding: 0.6rem;
+  color: $carbone;
+  transition: $transition-lusso;
+
+  &:hover {
+    color: $carbone;
+    transform: translateY(-4px);
+    box-shadow: $box-shadow-lg;
+    border-color: rgba(17, 17, 17, 0.12);
+
+    .car-card-media img {
+      transform: scale(1.04);
+    }
+  }
+}
+
+.car-card-media {
+  position: relative;
+  aspect-ratio: 4 / 3;
+  border-radius: 16px;
+  overflow: hidden;
+  background: $perla;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transition: transform 0.8s $ease-lusso;
+  }
+}
+
+.car-card-fav {
+  position: absolute;
+  top: 0.75rem;
+  right: 0.75rem;
+}
+
+.car-card-body {
+  padding: 1.25rem 0.9rem 0.9rem;
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+}
+
+.car-card-title {
+  font-size: 1.6rem;
+  margin-bottom: 0.25rem;
+}
+
+.car-card-footer {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-top: auto;
+  padding-top: 1.25rem;
+  border-top: 1px solid $linea-chiara;
+  margin-top: 1.25rem;
+}
+
+.car-card-price {
+  font-family: $headings-font-family;
+  font-size: 1.65rem;
+  font-weight: 500;
+}
+
+.fav-btn {
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  background: rgba(255, 255, 255, 0.85);
+  backdrop-filter: blur(8px);
+  color: $carbone;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  transition: $transition-lusso;
+
+  &:hover {
+    background: $ottico;
+    transform: scale(1.08);
+  }
+
+  &.is-active {
+    background: $carbone;
+    border-color: $carbone;
+    color: $ottico;
+  }
+
+  &:disabled {
+    opacity: 0.6;
+  }
+}
+
+.car-image-placeholder {
+  width: 100%;
+  height: 100%;
+  min-height: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, $perla, $gray-200);
+  color: $argento;
+}
+
+.pagination {
+  --bs-pagination-padding-x: 0;
+  flex-wrap: wrap;
+
+  .page-link {
+    min-width: 42px;
+    height: 42px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: $border-radius-pill !important;
+    margin: 0 2px;
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Dettaglio
+// ---------------------------------------------------------------------------
+.gallery-main {
+  border-radius: $border-radius-xl;
+  overflow: hidden;
+  background: $perla;
+  aspect-ratio: 16 / 10;
+
+  .carousel-inner,
+  .carousel-item {
+    height: 100%;
+  }
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  .carousel-control-prev,
+  .carousel-control-next {
+    width: 4.5rem;
+    opacity: 0;
+    transition: $transition-lusso;
+  }
+
+  &:hover .carousel-control-prev,
+  &:hover .carousel-control-next {
+    opacity: 0.9;
+  }
+}
+
+.gallery-thumbs {
+  display: flex;
+  gap: 0.75rem;
+  margin-top: 0.9rem;
+  overflow-x: auto;
+  padding-bottom: 0.25rem;
+}
+
+.gallery-thumb {
+  flex: 0 0 96px;
+  height: 68px;
+  border-radius: 12px;
+  overflow: hidden;
+  border: 1px solid $linea-chiara;
+  padding: 0;
+  background: $perla;
+  opacity: 0.55;
+
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &:hover,
+  &.is-active {
+    opacity: 1;
+  }
+
+  &.is-active {
+    border-color: $carbone;
+  }
+}
+
+.detail-panel {
+  padding: 2rem;
+
+  @include media-breakpoint-up(lg) {
+    position: sticky;
+    top: 96px;
+  }
+}
+
+.detail-title {
+  font-size: clamp(2.25rem, 3vw, 2.85rem);
+  margin-bottom: 0.4rem;
+}
+
+.detail-price {
+  font-family: $headings-font-family;
+  font-size: 2.75rem;
+  font-weight: 500;
+  line-height: 1;
+  margin-bottom: 1.75rem;
+}
+
+.detail-description {
+  margin-top: 5rem;
+  padding-top: 3rem;
+  border-top: 1px solid $linea-chiara;
+}
+
+.detail-text {
+  font-size: 1.05rem;
+  line-height: 1.85;
+  white-space: pre-line;
+  max-width: 72ch;
+}

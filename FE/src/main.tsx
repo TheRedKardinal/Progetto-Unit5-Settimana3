@@ -4,12 +4,15 @@ import { BrowserRouter } from 'react-router-dom'
 import './styles/main.scss'
 import App from './App.tsx'
 import { AuthProvider } from './context/AuthContext.tsx'
+import { FavoritesProvider } from './context/FavoritesContext.tsx'
 
 createRoot(document.getElementById('root')!).render(
   <StrictMode>
     <BrowserRouter>
       <AuthProvider>
-        <App />
+        <FavoritesProvider>
+          <App />
+        </FavoritesProvider>
       </AuthProvider>
     </BrowserRouter>
   </StrictMode>,

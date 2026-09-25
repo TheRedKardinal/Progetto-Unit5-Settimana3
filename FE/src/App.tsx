@@ -1,6 +1,8 @@
 import { Route, Routes } from 'react-router-dom'
 import { GuestOnly, RequireAuth } from './components/Guards'
 import Layout from './components/Layout'
+import Catalogo from './pages/Catalogo'
+import Dettaglio from './pages/Dettaglio'
 import Login from './pages/Login'
 import NotFound from './pages/NotFound'
 import PasswordDimenticata from './pages/PasswordDimenticata'
@@ -13,6 +15,9 @@ export default function App() {
   return (
     <Routes>
       <Route element={<Layout />}>
+        <Route index element={<Catalogo />} />
+        <Route path="/auto/:id" element={<Dettaglio />} />
+
         {/* Link inviati via email dal backend (EmailService): percorsi da non cambiare */}
         <Route path="/verifica-email" element={<VerificaEmail />} />
         <Route path="/reset-password" element={<ResetPassword />} />
