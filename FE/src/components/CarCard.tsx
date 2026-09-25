@@ -3,15 +3,19 @@ import type { CarSummaryResponse } from '../types'
 import { CARBURANTE_LABEL, CONDIZIONE_LABEL, formatKm, formatPrezzo } from '../utils/format'
 import CarImage from './CarImage'
 import FavoriteButton from './FavoriteButton'
+import Icon from './Icon'
 
 export default function CarCard({ car }: { car: CarSummaryResponse }) {
   return (
-    <Link to={`/auto/${car.id}`} className="car-card">
+    <Link to={`/auto/${car.id}`} className="car-card trim">
       <div className="car-card-media">
         <CarImage src={car.copertina} alt={car.titolo} />
         <div className="car-card-fav">
           <FavoriteButton carId={car.id} />
         </div>
+        <span className="car-card-cta" aria-hidden="true">
+          Scopri <Icon name="arrowRight" size={16} />
+        </span>
       </div>
       <div className="car-card-body">
         <p className="eyebrow mb-2">

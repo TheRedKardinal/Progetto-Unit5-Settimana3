@@ -159,7 +159,7 @@ export default function AdminAnnunci() {
           {/* Da mobile la tabella diventa una lista di card, senza scroll orizzontale */}
           <div className="admin-cards d-md-none">
             {data.content.map((car) => (
-              <article key={car.id} className="admin-card">
+              <article key={car.id} className="admin-card trim">
                 <Link to={`/admin/auto/${car.id}`} className="admin-card-main">
                   <div className="admin-thumb">
                     <CarImage src={car.copertina} alt="" />

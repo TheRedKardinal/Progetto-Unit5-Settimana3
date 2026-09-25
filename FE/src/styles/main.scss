@@ -23,6 +23,11 @@
   --sa-glass: rgba(255, 255, 255, 0.88);
   --sa-shadow: 0 12px 32px -8px rgba(17, 17, 17, 0.09);
   --sa-shadow-lg: 0 24px 56px -16px rgba(17, 17, 17, 0.18);
+  // Filetto "cromato" in hover: gradiente tra tono pieno e tono tenue
+  --sa-trim-1: rgba(17, 17, 17, 0.9);
+  --sa-trim-2: rgba(17, 17, 17, 0.14);
+  // Luce radente sul bordo superiore delle superfici (visibile solo nel tema scuro)
+  --sa-bevel: transparent;
   --bs-secondary-rgb: 92, 92, 92;
 }
 
@@ -43,6 +48,9 @@
   --sa-glass: rgba(17, 17, 17, 0.72);
   --sa-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.55);
   --sa-shadow-lg: 0 24px 56px -16px rgba(0, 0, 0, 0.75);
+  --sa-trim-1: rgba(255, 255, 255, 0.85);
+  --sa-trim-2: rgba(255, 255, 255, 0.1);
+  --sa-bevel: rgba(255, 255, 255, 0.06);
   --bs-secondary-rgb: 163, 163, 163;
   // text-dark / bg-dark diventano "colore d'accento" anche nel tema scuro
   --bs-dark-rgb: 237, 237, 237;
@@ -120,7 +128,59 @@ main {
   background: var(--sa-surface);
   border: 1px solid var(--sa-line);
   border-radius: $border-radius-xl;
-  box-shadow: var(--sa-shadow);
+  box-shadow:
+    inset 0 1px 0 var(--sa-bevel),
+    var(--sa-shadow);
+}
+
+// Filetto cromato: bordo 1px a gradiente che compare in hover con un riflesso che scorre,
+// come le finiture metalliche di una plancia. Il gradiente è mascherato per restare solo sul bordo.
+.trim {
+  position: relative;
+  isolation: isolate;
+
+  &::before {
+    content: '';
+    position: absolute;
+    inset: -1px;
+    z-index: 3;
+    padding: 1px;
+    border-radius: inherit;
+    background: linear-gradient(
+      115deg,
+      var(--sa-trim-2) 0%,
+      var(--sa-trim-1) 22%,
+      var(--sa-trim-2) 45%,
+      var(--sa-trim-2) 55%,
+      var(--sa-trim-1) 78%,
+      var(--sa-trim-2) 100%
+    );
+    background-size: 220% 220%;
+    background-position: 100% 100%;
+    -webkit-mask:
+      linear-gradient(#000 0 0) content-box,
+      linear-gradient(#000 0 0);
+    -webkit-mask-composite: xor;
+    mask-composite: exclude;
+    opacity: 0;
+    pointer-events: none;
+    transition:
+      opacity 0.5s $ease-lusso,
+      background-position 1.4s $ease-lusso;
+  }
+
+  &:hover::before,
+  &:focus-visible::before,
+  &:focus-within::before {
+    opacity: 1;
+    background-position: 0% 0%;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .trim::before {
+    transition: opacity 0.3s linear;
+  }
 }
 
 .page-enter {
@@ -618,14 +678,180 @@ main {
 // Catalogo
 // ---------------------------------------------------------------------------
 .hero {
-  background:
-    radial-gradient(90% 120% at 100% 0%, rgba(255, 255, 255, 0.08), transparent 55%),
-    var(--sa-deep);
+  position: relative;
+  overflow: hidden;
+  isolation: isolate;
+  display: flex;
+  align-items: flex-end;
+  min-height: min(78vh, 760px);
+  background: var(--sa-deep);
   color: $ottico;
-  padding: 6rem 0 9rem;
+  padding: 7rem 0 10rem;
   border-bottom: 1px solid var(--sa-deep-line);
   border-bottom-left-radius: $border-radius-xxl;
   border-bottom-right-radius: $border-radius-xxl;
+}
+
+.hero-content {
+  position: relative;
+  z-index: 2;
+}
+
+// Fotografie in bianco e nero, sovrapposte: la dissolvenza passa da una all'altra
+.hero-media {
+  position: absolute;
+  inset: 0;
+  z-index: 0;
+}
+
+.hero-slide {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0;
+  filter: grayscale(1) contrast(1.08) brightness(0.8);
+  transform: scale(1.1);
+  transition: opacity 1.8s $ease-lusso;
+  will-change: opacity, transform;
+}
+
+// Stessa animazione su entrante e uscente: il movimento non si interrompe durante la dissolvenza
+.hero-slide.is-active,
+.hero-slide.is-leaving {
+  animation: ken-burns 9s linear forwards;
+}
+
+.hero-slide.is-active {
+  opacity: 1;
+}
+
+@keyframes ken-burns {
+  from {
+    transform: scale(1.12) translate3d(1.5%, 0.5%, 0);
+  }
+  to {
+    transform: scale(1.02) translate3d(-1%, -0.5%, 0);
+  }
+}
+
+// Velo per la leggibilità: pieno a sinistra (testo) e in basso (raccordo con la barra filtri)
+.hero-scrim {
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(90deg, rgba(10, 10, 10, 0.92) 0%, rgba(10, 10, 10, 0.62) 42%, rgba(10, 10, 10, 0.12) 100%),
+    linear-gradient(0deg, rgba(10, 10, 10, 0.85) 0%, rgba(10, 10, 10, 0) 45%);
+}
+
+.hero-caption {
+  position: absolute;
+  z-index: 2;
+  right: max(1rem, calc((100vw - 1320px) / 2 + 1rem));
+  bottom: 6.75rem;
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+}
+
+.hero-caption-name {
+  font-family: $headings-font-family;
+  font-style: italic;
+  font-size: 1.05rem;
+  color: rgba(255, 255, 255, 0.75);
+  min-width: 11rem;
+  text-align: right;
+}
+
+.hero-dots {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.hero-dot {
+  position: relative;
+  width: 28px;
+  height: 18px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+
+  // Filo sottile, dentro un'area cliccabile più alta
+  &::before {
+    content: '';
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: 50%;
+    height: 2px;
+    border-radius: 2px;
+    background: rgba(255, 255, 255, 0.28);
+  }
+
+  &:hover::before {
+    background: rgba(255, 255, 255, 0.6);
+  }
+}
+
+.hero-dot-fill {
+  position: absolute;
+  left: 0;
+  top: 50%;
+  height: 2px;
+  width: 100%;
+  border-radius: 2px;
+  background: $ottico;
+
+  &.is-running {
+    animation: hero-progress 7s linear forwards;
+  }
+}
+
+@keyframes hero-progress {
+  from {
+    width: 0;
+  }
+  to {
+    width: 100%;
+  }
+}
+
+.hero-credit {
+  font-size: 0.65rem;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: rgba(255, 255, 255, 0.4);
+}
+
+@include media-breakpoint-down(md) {
+  .hero-caption {
+    left: 1rem;
+    right: 1rem;
+    bottom: 6.25rem;
+    justify-content: space-between;
+  }
+
+  .hero-caption-name {
+    min-width: 0;
+    text-align: left;
+    font-size: 0.95rem;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+
+  .hero-credit {
+    display: none;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .hero-slide.is-active,
+  .hero-slide.is-leaving {
+    animation: none;
+    transform: scale(1.02);
+  }
 }
 
 .hero-title {
@@ -695,17 +921,25 @@ main {
   border-radius: $border-radius-xl;
   padding: 0.6rem;
   color: var(--sa-text);
-  box-shadow: $box-shadow-sm;
+  box-shadow:
+    inset 0 1px 0 var(--sa-bevel),
+    $box-shadow-sm;
   transition: $transition-lusso;
 
   &:hover {
     color: var(--sa-text);
     transform: translateY(-4px);
-    box-shadow: var(--sa-shadow-lg);
-    border-color: var(--sa-line-strong);
+    box-shadow:
+      inset 0 1px 0 var(--sa-bevel),
+      var(--sa-shadow-lg);
 
     .car-card-media img {
-      transform: scale(1.04);
+      transform: scale(1.05);
+    }
+
+    .car-card-cta {
+      opacity: 1;
+      transform: none;
     }
   }
 }
@@ -1377,7 +1611,8 @@ main {
   }
 
   .hero {
-    padding: 4rem 0 7rem;
+    min-height: 560px;
+    padding: 4rem 0 9.5rem;
   }
 
   .page-header {
@@ -1406,5 +1641,307 @@ main {
       padding-left: 0.75rem;
       padding-right: 0.75rem;
     }
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Vetrina: "Scopri" sulle card, pannello in evidenza, nastro delle marche
+// ---------------------------------------------------------------------------
+.car-card-media::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(0deg, rgba(10, 10, 10, 0.55) 0%, rgba(10, 10, 10, 0) 45%);
+  opacity: 0;
+  transition: opacity 0.5s $ease-lusso;
+  pointer-events: none;
+}
+
+.car-card:hover .car-card-media::after {
+  opacity: 1;
+}
+
+.car-card-cta {
+  position: absolute;
+  z-index: 1;
+  left: 1rem;
+  bottom: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  color: $ottico;
+  font-size: 0.75rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  opacity: 0;
+  transform: translateY(8px);
+  transition: $transition-lusso;
+}
+
+.results-header {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 1rem;
+  margin: 3.5rem 0 1.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--sa-line);
+}
+
+// Bottone pieno su pannello scuro (bianco in entrambi i temi)
+.btn-on-deep {
+  --bs-btn-color: #{$carbone};
+  --bs-btn-bg: #{$ottico};
+  --bs-btn-border-color: #{$ottico};
+  --bs-btn-hover-color: #{$carbone};
+  --bs-btn-hover-bg: #e6e6e6;
+  --bs-btn-hover-border-color: #e6e6e6;
+  --bs-btn-active-color: #{$carbone};
+  --bs-btn-active-bg: #{$ottico};
+  --bs-btn-active-border-color: #{$ottico};
+
+  &:hover {
+    transform: translateY(-1px);
+  }
+}
+
+.spotlight {
+  display: grid;
+  grid-template-columns: 1fr;
+  margin-top: 2.5rem;
+  background:
+    radial-gradient(80% 120% at 100% 0%, rgba(255, 255, 255, 0.07), transparent 60%),
+    var(--sa-deep);
+  color: $ottico;
+  border: 1px solid var(--sa-deep-line);
+  border-radius: $border-radius-xxl;
+  box-shadow:
+    inset 0 1px 0 rgba(255, 255, 255, 0.06),
+    var(--sa-shadow-lg);
+  // Il filetto su fondo scuro è sempre argento
+  --sa-trim-1: rgba(255, 255, 255, 0.85);
+  --sa-trim-2: rgba(255, 255, 255, 0.1);
+
+  @include media-breakpoint-up(lg) {
+    grid-template-columns: 1.35fr 1fr;
+    min-height: 440px;
+  }
+
+  &:hover .spotlight-media img {
+    transform: scale(1.17);
+  }
+}
+
+.spotlight-media {
+  position: relative;
+  display: block;
+  margin: 0.6rem;
+  border-radius: $border-radius-xl;
+  overflow: hidden;
+  aspect-ratio: 16 / 10;
+  background: $carbone-soft;
+
+  @include media-breakpoint-up(lg) {
+    aspect-ratio: auto;
+    margin-right: 0;
+  }
+
+  // Leggermente ingrandita: molte foto dei concessionari hanno bande bianche ai bordi
+  img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    transform: scale(1.12);
+    transition: transform 1.2s $ease-lusso;
+  }
+
+  .car-image-placeholder {
+    background: linear-gradient(135deg, $carbone-soft, #0d0d0d);
+    color: rgba(255, 255, 255, 0.3);
+  }
+}
+
+.spotlight-body {
+  display: flex;
+  flex-direction: column;
+  padding: 1.75rem 1.75rem 2rem;
+
+  @include media-breakpoint-up(lg) {
+    padding: 3rem 3rem 2.75rem;
+  }
+}
+
+.spotlight-eyebrow {
+  color: rgba(255, 255, 255, 0.55);
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+
+  &::before {
+    content: '';
+    width: 28px;
+    height: 1px;
+    background: rgba(255, 255, 255, 0.55);
+  }
+}
+
+.spotlight-title {
+  font-size: clamp(2.25rem, 3.4vw, 3.25rem);
+  font-weight: 400;
+  line-height: 1.02;
+  margin-bottom: 0.6rem;
+
+  a {
+    color: $ottico;
+
+    &:hover {
+      color: rgba(255, 255, 255, 0.75);
+    }
+  }
+}
+
+.spotlight-sub {
+  color: rgba(255, 255, 255, 0.55);
+  margin-bottom: 1.5rem;
+}
+
+.spotlight-specs {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  list-style: none;
+  padding: 0;
+  margin: 0 0 2rem;
+
+  li {
+    padding: 0.4rem 0.9rem;
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    border-radius: $border-radius-pill;
+    font-size: 0.8rem;
+    color: rgba(255, 255, 255, 0.8);
+  }
+}
+
+.spotlight-footer {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 1rem;
+  margin-top: auto;
+  padding-top: 1.5rem;
+  border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.spotlight-price {
+  font-family: $headings-font-family;
+  font-size: 2.4rem;
+  font-weight: 500;
+  line-height: 1;
+}
+
+// Nastro delle marche: scorre all'infinito (la lista è duplicata), sfuma ai lati, si ferma in hover
+.brand-strip {
+  display: flex;
+  align-items: center;
+  gap: 1.5rem;
+  margin-top: 2rem;
+  padding: 0.35rem 0;
+  border-top: 1px solid var(--sa-line);
+  border-bottom: 1px solid var(--sa-line);
+}
+
+.brand-strip-label {
+  flex-shrink: 0;
+}
+
+.brand-strip-viewport {
+  flex: 1;
+  overflow: hidden;
+  -webkit-mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+  mask-image: linear-gradient(90deg, transparent, #000 8%, #000 92%, transparent);
+}
+
+.brand-strip-track {
+  display: flex;
+  width: max-content;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  animation: nastro 38s linear infinite;
+
+  .brand-strip:hover &,
+  .brand-strip:focus-within & {
+    animation-play-state: paused;
+  }
+
+  button {
+    display: flex;
+    align-items: center;
+    gap: 2.5rem;
+    padding: 0.5rem 1.25rem 0.5rem 0;
+    margin-right: 1.25rem;
+    border: 0;
+    background: transparent;
+    font-family: $headings-font-family;
+    font-size: 1.6rem;
+    font-style: italic;
+    color: var(--sa-muted);
+    white-space: nowrap;
+
+    // Separatore: un punto sottile tra le marche
+    &::after {
+      content: '';
+      width: 4px;
+      height: 4px;
+      border-radius: 50%;
+      background: var(--sa-line-strong);
+    }
+
+    &:hover,
+    &:focus-visible {
+      color: var(--sa-text);
+    }
+  }
+}
+
+@keyframes nastro {
+  from {
+    transform: translateX(0);
+  }
+  to {
+    transform: translateX(-50%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .brand-strip-track {
+    animation: none;
+    flex-wrap: wrap;
+    width: auto;
+
+    li[aria-hidden] {
+      display: none;
+    }
+  }
+
+  .brand-strip-viewport {
+    -webkit-mask-image: none;
+    mask-image: none;
+  }
+}
+
+@include media-breakpoint-down(sm) {
+  .brand-strip-label {
+    display: none;
+  }
+
+  .brand-strip-track button {
+    font-size: 1.3rem;
+  }
+
+  .spotlight-price {
+    font-size: 2rem;
   }
 }

@@ -66,7 +66,7 @@ export default function Preferiti() {
           {data.map((f) => {
             const disponibile = f.car.statoAnnuncio === 'PUBBLICATO'
             return (
-              <article key={f.car.id} className={`fav-item${disponibile ? '' : ' is-unavailable'}`}>
+              <article key={f.car.id} className={`fav-item trim${disponibile ? '' : ' is-unavailable'}`}>
                 <div className="fav-item-media">
                   <CarImage src={f.car.copertina} alt={f.car.titolo} />
                 </div>
