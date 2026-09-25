@@ -86,8 +86,9 @@ public class AutoDevClient {
     }
 
     /**
-     * GET /listings: annunci reali, filtrati per marca e fascia di prezzo (sintassi "min-max"),
-     * dal più caro. Il piano gratuito restituisce al massimo 20 risultati per pagina (page parte da 1).
+     * GET /listings: annunci reali, filtrati per marca e fascia di prezzo (sintassi "min-max"), nell'ordine
+     * predefinito di auto.dev (ultimi aggiornati). Niente ordinamento per prezzo: in cima finirebbero gli annunci
+     * con prezzi sbagliati. Il piano gratuito restituisce al massimo 20 risultati per pagina (page parte da 1).
      */
     public List<Listing> annunci(String marche, String fasciaPrezzo, int pagina, int limite) {
         verificaConfigurazione();
@@ -96,7 +97,6 @@ public class AutoDevClient {
                     .uri(u -> u.path("/listings")
                             .queryParam("vehicle.make", marche)
                             .queryParam("retailListing.price", fasciaPrezzo)
-                            .queryParam("sort", "price.desc")
                             .queryParam("page", pagina)
                             .queryParam("limit", limite)
                             .build())

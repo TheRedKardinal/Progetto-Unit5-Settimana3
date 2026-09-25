@@ -6,7 +6,7 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
  * Catalogo iniziale da auto.dev (CatalogSeeder). Disattivato di default: ogni avvio con enabled=true
  * consuma chiamate della quota auto.dev, ma solo se il catalogo ha meno di {@code size} annunci.
  *
- * @param marche       filtro vehicle.make di auto.dev, separato da virgole
+ * @param marche       gruppi di marche separati da "|", marche di un gruppo separate da virgole (filtro vehicle.make)
  * @param fasciaPrezzo filtro retailListing.price nel formato "min-max" (dollari)
  */
 @ConfigurationProperties(prefix = "app.catalog-seed")

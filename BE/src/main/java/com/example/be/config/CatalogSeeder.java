@@ -22,9 +22,12 @@ import java.math.RoundingMode;
 import java.time.Instant;
 import java.time.Year;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.Optional;
+import java.util.Set;
 import java.util.StringJoiner;
 
 /**
@@ -55,35 +58,59 @@ public class CatalogSeeder implements ApplicationRunner {
             log.info("Catalogo iniziale non necessario: già {} annunci", presenti);
             return;
         }
-        try {
-            int creati = popola(props.size());
-            log.info("Catalogo iniziale: {} annunci importati da auto.dev", creati);
-        } catch (ServizioEsternoException e) {
-            log.warn("Catalogo iniziale non importato: {}", e.getMessage());
-        }
+        int creati = popola(props.size());
+        log.info("Catalogo iniziale: {} annunci importati da auto.dev", creati);
     }
 
-    private int popola(int obiettivo) {
+    /**
+     * Le marche sono divise in gruppi ("|"): una sola ricerca con tutte le marche restituirebbe quasi solo
+     * le marche con più annunci (BMW, Mercedes). Ogni gruppo contribuisce con la sua quota; se un gruppo
+     * ha pochi annunci validi, il secondo giro (pagina 2) completa con gli altri. Al massimo 2 chiamate per gruppo.
+     * Se auto.dev smette di rispondere a metà, si salva comunque quello che è già stato raccolto.
+     */
+    int popola(int obiettivo) {
+        List<String> gruppi = Arrays.stream(props.marche().split("\\|")).map(String::trim).filter(g -> !g.isEmpty()).toList();
+        int quota = (obiettivo + gruppi.size() - 1) / gruppi.size();
         List<Car> nuove = new ArrayList<>();
-        // Una pagina in più del minimo, per compensare gli annunci scartati (senza foto, VIN doppi, ...)
-        int maxPagine = (obiettivo + PER_PAGINA - 1) / PER_PAGINA + 1;
-        for (int pagina = 1; pagina <= maxPagine && nuove.size() < obiettivo; pagina++) {
-            List<Listing> annunci = autoDevClient.annunci(props.marche(), props.fasciaPrezzo(), pagina, PER_PAGINA);
-            for (Listing annuncio : annunci) {
-                if (nuove.size() >= obiettivo) {
-                    break;
+        Set<String> esauriti = new HashSet<>();
+        try {
+            for (int pagina = 1; pagina <= 2 && nuove.size() < obiettivo; pagina++) {
+                for (String gruppo : gruppi) {
+                    int limite = pagina == 1 ? Math.min(quota, obiettivo - nuove.size()) : obiettivo - nuove.size();
+                    if (limite <= 0) {
+                        break;
+                    }
+                    if (esauriti.contains(gruppo)) {
+                        continue;
+                    }
+                    List<Listing> annunci = autoDevClient.annunci(gruppo, props.fasciaPrezzo(), pagina, PER_PAGINA);
+                    if (annunci.size() < PER_PAGINA) {
+                        esauriti.add(gruppo);
+                    }
+                    aggiungi(annunci, limite, nuove);
                 }
-                daAnnuncio(annuncio)
-                        .filter(car -> nuove.stream().noneMatch(n -> n.getVin().equals(car.getVin())))
-                        .filter(car -> !carRepository.existsByVin(car.getVin()))
-                        .ifPresent(nuove::add);
             }
-            if (annunci.size() < PER_PAGINA) {
-                break;
-            }
+        } catch (ServizioEsternoException e) {
+            log.warn("auto.dev non disponibile durante il catalogo iniziale: {}", e.getMessage());
         }
         carRepository.saveAll(nuove);
         return nuove.size();
+    }
+
+    private void aggiungi(List<Listing> annunci, int limite, List<Car> nuove) {
+        int aggiunte = 0;
+        for (Listing annuncio : annunci) {
+            if (aggiunte >= limite) {
+                return;
+            }
+            Optional<Car> car = daAnnuncio(annuncio)
+                    .filter(c -> nuove.stream().noneMatch(n -> n.getVin().equals(c.getVin())))
+                    .filter(c -> !carRepository.existsByVin(c.getVin()));
+            if (car.isPresent()) {
+                nuove.add(car.get());
+                aggiunte++;
+            }
+        }
     }
 
     /** Converte un annuncio auto.dev in un'auto pubblicata; vuoto se mancano dati indispensabili. */
@@ -120,8 +147,34 @@ public class CatalogSeeder implements ApplicationRunner {
     }
 
     private static String titolo(ListingVehicle v) {
-        String base = v.make() + " " + v.model();
-        return isBlank(v.trim()) ? base : base + " " + v.trim();
+        String base = v.make().trim() + " " + v.model().trim();
+        String allestimento = allestimento(v);
+        return allestimento == null ? base : base + " " + allestimento;
+    }
+
+    /**
+     * Il trim dei concessionari è spesso sporco: ripete il modello ("488 Pista 488 Pista"), contiene note
+     * commerciali tra asterischi o vale "Unspecified". Si tiene solo la parte utile, se aggiunge qualcosa al modello.
+     */
+    static String allestimento(ListingVehicle v) {
+        if (isBlank(v.trim())) {
+            return null;
+        }
+        String t = v.trim();
+        int asterisco = t.indexOf('*');
+        if (asterisco >= 0) {
+            t = t.substring(0, asterisco);
+        }
+        t = t.trim();
+        String modello = v.model().trim();
+        if (t.regionMatches(true, 0, modello, 0, modello.length())) {
+            t = t.substring(modello.length()).trim();
+        }
+        String minuscolo = t.toLowerCase(Locale.ROOT);
+        if (t.isEmpty() || minuscolo.equals("unspecified") || modello.toLowerCase(Locale.ROOT).contains(minuscolo)) {
+            return null;
+        }
+        return t;
     }
 
     private static String descrizione(ListingVehicle v, BigDecimal km) {

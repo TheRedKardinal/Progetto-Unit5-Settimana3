@@ -46,11 +46,13 @@ app:
     base-url: https://api.auto.dev
     api-key: ${AUTODEV_API_KEY:}
   catalog-seed:
-    # true solo per popolare un catalogo vuoto (consuma 3-4 chiamate della quota auto.dev)
+    # true solo per popolare un catalogo vuoto (consuma 4-8 chiamate della quota auto.dev)
     enabled: ${CATALOG_SEED:false}
     size: 50
-    marche: Porsche,Ferrari,Lamborghini,Bentley,Rolls-Royce,Aston Martin,Maserati,McLaren,Mercedes-Benz,BMW
-    fascia-prezzo: 90000-2000000
+    # Gruppi separati da "|": ognuno fornisce una quota del catalogo (una chiamata auto.dev per gruppo)
+    marche: Ferrari,Lamborghini,McLaren|Rolls-Royce,Bentley,Aston Martin|Porsche,Maserati|Mercedes-Benz,BMW
+    # Oltre i 600k gli annunci auto.dev hanno spesso prezzi sbagliati (es. utilitarie a 1,8 milioni)
+    fascia-prezzo: 80000-600000
   admin:
     nome: ${ADMIN_NOME:Super}
     cognome: ${ADMIN_COGNOME:Admin}
