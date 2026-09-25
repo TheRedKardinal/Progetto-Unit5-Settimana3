@@ -44,20 +44,21 @@ $text-muted: $grafite;
 $min-contrast-ratio: 3;
 
 // Tema scuro (data-bs-theme="dark"): stessa monocromia, invertita
-$body-bg-dark: $carbone-soft;
+// Superfici del tema scuro un gradino sopra il fondo pagina (#151515), che a sua volta sta sopra i pannelli #0a0a0a
+$body-bg-dark: #202020;
 $body-color-dark: #ededed;
 $body-emphasis-color-dark: $ottico;
 $body-secondary-color-dark: rgba(255, 255, 255, 0.6);
-$body-secondary-bg-dark: #151515;
+$body-secondary-bg-dark: #1b1b1b;
 $body-tertiary-color-dark: rgba(255, 255, 255, 0.4);
-$body-tertiary-bg-dark: #151515;
-$border-color-dark: #2a2a2a;
+$body-tertiary-bg-dark: #1b1b1b;
+$border-color-dark: #2e2e2e;
 $link-color-dark: $ottico;
 $link-hover-color-dark: #c8c8c8;
 $form-invalid-color-dark: $ottico;
 $form-invalid-border-color-dark: rgba(255, 255, 255, 0.6);
 $form-valid-color-dark: $ottico;
-$form-valid-border-color-dark: #2a2a2a;
+$form-valid-border-color-dark: #2e2e2e;
 
 // Tipografia
 $font-family-sans-serif: 'DM Sans', system-ui, -apple-system, 'Segoe UI', sans-serif;

@@ -7,8 +7,9 @@
 // ---------------------------------------------------------------------------
 :root,
 [data-bs-theme='light'] {
-  --sa-bg: #f2f2f2; // fondo pagina: stacca le superfici bianche
+  --sa-bg: #e8e8e8; // fondo pagina: un gradino sotto le superfici bianche
   --sa-surface: #{$ottico}; // card, pannelli, input
+  --sa-surface-lo: #fafafa; // base del gradiente delle card (luce dall'alto)
   --sa-well: #{$perla}; // "pozzetti" dentro le superfici (intestazioni, riquadri)
   --sa-text: #{$carbone};
   --sa-muted: #{$grafite};
@@ -23,6 +24,11 @@
   --sa-glass: rgba(255, 255, 255, 0.88);
   --sa-shadow: 0 12px 32px -8px rgba(17, 17, 17, 0.09);
   --sa-shadow-lg: 0 24px 56px -16px rgba(17, 17, 17, 0.18);
+  // Ombra a due livelli delle card: contatto ravvicinato + diffusa
+  --sa-card-shadow: 0 1px 2px rgba(17, 17, 17, 0.06), 0 10px 28px -14px rgba(17, 17, 17, 0.22);
+  --sa-card-shadow-hover: 0 2px 4px rgba(17, 17, 17, 0.05), 0 30px 60px -22px rgba(17, 17, 17, 0.35);
+  // Riflesso che segue il puntatore sulle card
+  --sa-glint: rgba(255, 255, 255, 0.55);
   // Filetto "cromato" in hover: gradiente tra tono pieno e tono tenue
   --sa-trim-1: rgba(17, 17, 17, 0.9);
   --sa-trim-2: rgba(17, 17, 17, 0.14);
@@ -32,9 +38,11 @@
 }
 
 [data-bs-theme='dark'] {
-  --sa-bg: #{$carbone};
-  --sa-surface: #{$carbone-soft};
-  --sa-well: #151515;
+  // Tre livelli: pannelli #0a0a0a < fondo pagina #151515 < superfici #202020
+  --sa-bg: #151515;
+  --sa-surface: #202020;
+  --sa-surface-lo: #1c1c1c;
+  --sa-well: #1b1b1b;
   --sa-text: #ededed;
   --sa-muted: rgba(255, 255, 255, 0.6);
   --sa-subtle: rgba(255, 255, 255, 0.3);
@@ -48,9 +56,12 @@
   --sa-glass: rgba(17, 17, 17, 0.72);
   --sa-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.55);
   --sa-shadow-lg: 0 24px 56px -16px rgba(0, 0, 0, 0.75);
+  --sa-card-shadow: 0 1px 2px rgba(0, 0, 0, 0.5), 0 12px 30px -14px rgba(0, 0, 0, 0.85);
+  --sa-card-shadow-hover: 0 2px 4px rgba(0, 0, 0, 0.5), 0 34px 64px -22px rgba(0, 0, 0, 0.95);
+  --sa-glint: rgba(255, 255, 255, 0.09);
   --sa-trim-1: rgba(255, 255, 255, 0.85);
   --sa-trim-2: rgba(255, 255, 255, 0.1);
-  --sa-bevel: rgba(255, 255, 255, 0.06);
+  --sa-bevel: rgba(255, 255, 255, 0.07);
   --bs-secondary-rgb: 163, 163, 163;
   // text-dark / bg-dark diventano "colore d'accento" anche nel tema scuro
   --bs-dark-rgb: 237, 237, 237;
@@ -911,30 +922,64 @@ main {
   pointer-events: none;
 }
 
-// Card auto
+// Card auto: superficie con luce dall'alto, ombra a due livelli, inclinazione e riflesso che seguono il
+// puntatore (variabili --rx, --ry, --mx, --my impostate da CarCard; senza mouse restano ai valori di riposo)
 .car-card {
+  position: relative;
   display: flex;
   flex-direction: column;
   height: 100%;
-  background: var(--sa-surface);
+  background: linear-gradient(180deg, var(--sa-surface) 0%, var(--sa-surface-lo) 100%);
   border: 1px solid var(--sa-line);
   border-radius: $border-radius-xl;
   padding: 0.6rem;
   color: var(--sa-text);
   box-shadow:
     inset 0 1px 0 var(--sa-bevel),
-    $box-shadow-sm;
-  transition: $transition-lusso;
+    var(--sa-card-shadow);
+  transform: perspective(1100px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg)) translateY(var(--lift, 0px));
+  // Uscita lenta e morbida: la card torna in posizione come un pannello ammortizzato
+  transition:
+    transform 0.7s $ease-lusso,
+    box-shadow 0.5s $ease-lusso,
+    border-color 0.35s $ease-lusso;
+
+  // Riflesso: una luce morbida che scorre sulla superficie seguendo il puntatore
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    z-index: 2;
+    border-radius: inherit;
+    background: radial-gradient(
+      circle at var(--mx, 50%) var(--my, 0%),
+      var(--sa-glint) 0%,
+      transparent 45%
+    );
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.5s $ease-lusso;
+  }
 
   &:hover {
+    --lift: -6px;
     color: var(--sa-text);
-    transform: translateY(-4px);
     box-shadow:
       inset 0 1px 0 var(--sa-bevel),
-      var(--sa-shadow-lg);
+      var(--sa-card-shadow-hover);
+    // Mentre il mouse si muove l'inclinazione segue subito, senza ritardo percepibile
+    transition:
+      transform 0.18s ease-out,
+      box-shadow 0.5s $ease-lusso,
+      border-color 0.35s $ease-lusso;
+
+    &::after {
+      opacity: 1;
+    }
 
     .car-card-media img {
       transform: scale(1.05);
+      filter: none;
     }
 
     .car-card-cta {
@@ -950,12 +995,28 @@ main {
   border-radius: 16px;
   overflow: hidden;
   background: var(--sa-well);
+  // Filo interno: la foto sembra incassata nella card
+  box-shadow: inset 0 0 0 1px var(--sa-line);
 
   img {
     width: 100%;
     height: 100%;
     object-fit: cover;
-    transition: transform 0.8s $ease-lusso;
+    transition:
+      transform 0.8s $ease-lusso,
+      filter 0.6s $ease-lusso;
+  }
+}
+
+// Nel tema scuro le foto da concessionario (fondo bianco) abbagliano: attenuate, tornano piene in hover
+[data-bs-theme='dark'] .car-card-media img {
+  filter: brightness(0.86);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .car-card,
+  .car-card:hover {
+    transform: none;
   }
 }
 
@@ -1142,14 +1203,18 @@ main {
   grid-template-columns: 1fr;
   gap: 1.25rem;
   padding: 0.75rem;
-  background: var(--sa-surface);
+  background: linear-gradient(180deg, var(--sa-surface) 0%, var(--sa-surface-lo) 100%);
   border: 1px solid var(--sa-line);
   border-radius: $border-radius-xl;
-  box-shadow: $box-shadow-sm;
+  box-shadow:
+    inset 0 1px 0 var(--sa-bevel),
+    var(--sa-card-shadow);
   transition: $transition-lusso;
 
   &:hover {
-    box-shadow: var(--sa-shadow);
+    box-shadow:
+      inset 0 1px 0 var(--sa-bevel),
+      var(--sa-card-shadow-hover);
   }
 
   @include media-breakpoint-up(md) {
