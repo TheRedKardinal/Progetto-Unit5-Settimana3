@@ -119,7 +119,7 @@ export default function FiltriAuto({
                   ))}
                 </Form.Select>
               </Col>
-              <Col xs={6} sm={conStato ? 4 : 6} lg={conStato ? 1 : 2}>
+              <Col xs={6} sm={conStato ? 4 : 6} lg={2}>
                 <Form.Label htmlFor="filtro-condizione">Condizione</Form.Label>
                 <Form.Select
                   id="filtro-condizione"
@@ -134,7 +134,7 @@ export default function FiltriAuto({
                   ))}
                 </Form.Select>
               </Col>
-              <Col xs={12} sm={6} lg={2}>
+              <Col xs={12} sm={6} lg={conStato ? 3 : 2}>
                 <Form.Label htmlFor="filtro-min">Prezzo (€)</Form.Label>
                 <div className="d-flex gap-2">
                   <Form.Control
@@ -158,7 +158,8 @@ export default function FiltriAuto({
                   />
                 </div>
               </Col>
-              <Col xs={12} sm={6} lg={2}>
+              {/* Con il filtro stato la prima riga è piena: l'ordinamento va a capo */}
+              <Col xs={12} sm={6} lg={conStato ? 3 : 2}>
                 <Form.Label htmlFor="filtro-sort">Ordina per</Form.Label>
                 <Form.Select id="filtro-sort" value={valori.sort} onChange={(e) => onApply({ sort: e.target.value })}>
                   {ordinamenti.map((o) => (
